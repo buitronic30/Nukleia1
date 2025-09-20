@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUKLEIA - Análisis Facial en Vivo</title>
+    <title>NUKLEIA - Análisis Facial con Inteligencia Artificial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -29,10 +30,11 @@
             padding: 0.75rem 1.5rem;
             border-radius: 9999px;
             font-weight: 600;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
         .btn-primary:hover {
             background-color: #FF4500;
+            transform: translateY(-2px);
         }
         .border-salmon {
             border-color: #FFB6C1;
@@ -85,6 +87,22 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
+        .procedure-card {
+            background-color: #FFECB3;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .procedure-card:hover {
+            transform: translateY(-5px);
+        }
+        .procedure-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 3px solid #FFB6C1;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -103,17 +121,17 @@
             <h3 class="text-2xl font-semibold mt-8 mb-4 text-gray-800">Cómo usar el análisis facial:</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="flex flex-col items-center p-4 rounded-lg golden-pastel">
-                    <span class="text-4xl mb-2">📸</span>
+                    <span class="text-4xl mb-2"><i class="fas fa-camera"></i></span>
                     <p class="font-semibold">1. Habilita tu cámara</p>
                     <p class="text-sm mt-1 text-gray-600">Asegúrate de tener buena luz y el rostro despejado.</p>
                 </div>
                 <div class="flex flex-col items-center p-4 rounded-lg golden-pastel">
-                    <span class="text-4xl mb-2">💡</span>
+                    <span class="text-4xl mb-2"><i class="fas fa-microchip"></i></span>
                     <p class="font-semibold">2. Análisis inteligente</p>
                     <p class="text-sm mt-1 text-gray-600">Nuestra IA procesará la imagen en tiempo real para detectar arrugas, la edad de la piel, y más.</p>
                 </div>
                 <div class="flex flex-col items-center p-4 rounded-lg golden-pastel">
-                    <span class="text-4xl mb-2">✅</span>
+                    <span class="text-4xl mb-2"><i class="fas fa-check-circle"></i></span>
                     <p class="font-semibold">3. Obtén tus resultados</p>
                     <p class="text-sm mt-1 text-gray-600">Recibirás un informe detallado con recomendaciones personalizadas.</p>
                 </div>
@@ -173,7 +191,7 @@
             <!-- Recomendaciones de Tratamientos -->
             <div class="mt-8">
                 <h3 class="text-3xl font-bold text-center mb-6 text-gray-800">Procedimientos Recomendados para ti</h3>
-                <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Procedimientos dinámicos aquí -->
                 </div>
             </div>
@@ -331,15 +349,15 @@
                 }
 
                 const procedures = [
-                    { name: 'Facefit', description: 'Un procedimiento de remodelación facial no quirúrgica para mejorar el contorno y la elasticidad.' },
-                    { name: 'Limpieza Facial Profunda', description: 'Ayuda a eliminar impurezas, células muertas y puntos negros, mejorando la textura de la piel.' },
-                    { name: 'Dermapen', description: 'Técnica de micro-punciones que estimula la producción de colágeno, ideal para tratar arrugas y cicatrices.' },
-                    { name: 'Radiofrecuencia', description: 'Tratamiento que utiliza calor para reafirmar la piel, reducir arrugas y mejorar la circulación.' },
-                    { name: 'Peeling Químico', description: 'Exfoliación profunda para renovar las capas de la piel y mejorar su apariencia.' }
+                    { name: 'Facefit', description: 'Un procedimiento de remodelación facial no quirúrgica para mejorar el contorno y la elasticidad.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Facefit' },
+                    { name: 'Limpieza Facial Profunda', description: 'Ayuda a eliminar impurezas, células muertas y puntos negros, mejorando la textura de la piel.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Limpieza+Facial' },
+                    { name: 'Dermapen', description: 'Técnica de micro-punciones que estimula la producción de colágeno, ideal para tratar arrugas y cicatrices.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Dermapen' },
+                    { name: 'Radiofrecuencia', description: 'Tratamiento que utiliza calor para reafirmar la piel, reducir arrugas y mejorar la circulación.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Radiofrecuencia' },
+                    { name: 'Peeling Químico', description: 'Exfoliación profunda para renovar las capas de la piel y mejorar su apariencia.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Peeling+Quimico' }
                 ];
                 
                 const recommendedProcedures = [];
-                for (let i = 0; i < 2; i++) {
+                for (let i = 0; i < 3; i++) {
                     const randomIndex = Math.floor(Math.random() * procedures.length);
                     recommendedProcedures.push(procedures.splice(randomIndex, 1)[0]);
                 }
@@ -368,10 +386,13 @@
                 proceduresList.innerHTML = '';
                 results.procedures.forEach(proc => {
                     const card = document.createElement('div');
-                    card.className = 'custom-card text-center';
+                    card.className = 'procedure-card';
                     card.innerHTML = `
-                        <h4 class="text-xl font-bold text-salmon-pink mb-2">${proc.name}</h4>
-                        <p class="text-gray-600">${proc.description}</p>
+                        <img src="${proc.image}" alt="${proc.name}" class="procedure-image">
+                        <div class="p-4">
+                            <h4 class="text-xl font-bold text-gray-800 mb-2">${proc.name}</h4>
+                            <p class="text-gray-600 text-sm">${proc.description}</p>
+                        </div>
                     `;
                     proceduresList.appendChild(card);
                 });
