@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUKLEIA - Análisis Facial con Inteligencia Artificial</title>
+    <title>NUKLEIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,46 +15,42 @@
             background-color: #FDF9F3; /* Blanco hueso */
             color: #4A4A4A;
         }
-        .salmon-pink {
-            background-color: #FFB6C1; /* Salmón rosado */
+        .text-brown {
+            color: #6D4C41;
         }
-        .golden-pastel {
-            background-color: #FFECB3; /* Pastel dorado */
-        }
-        .text-salmon-pink {
-            color: #FF6347; /* Salmón */
+        .bg-beige {
+            background-color: #F8F5E8;
         }
         .btn-primary {
-            background-color: #FF6347;
-            color: white;
-            padding: 0.75rem 1.5rem;
+            background-color: #FFECB3;
+            color: #6D4C41;
+            padding: 0.75rem 2rem;
             border-radius: 9999px;
             font-weight: 600;
+            border: 1px solid #6D4C41;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
         .btn-primary:hover {
-            background-color: #FF4500;
+            background-color: #F8D98C;
             transform: translateY(-2px);
         }
-        .border-salmon {
-            border-color: #FFB6C1;
+        .line-divider {
+            height: 1px;
+            background-color: #D3CDBF;
+            width: 100%;
+            margin: 2rem 0;
         }
-        .custom-card {
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 1rem;
-            padding: 2rem;
+        .header-image {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: cover;
+            object-position: top;
         }
-        .progress-bar {
-            background-color: #e5e7eb;
-            border-radius: 9999px;
-            overflow: hidden;
-            height: 1.5rem;
-        }
-        .progress-fill {
-            background-color: #FFB6C1;
-            height: 100%;
-            transition: width 1s ease-in-out;
+        .product-image {
+            max-width: 250px;
+            width: 100%;
+            height: auto;
         }
         #video-container, #image-container {
             position: relative;
@@ -87,60 +83,59 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .procedure-card {
-            background-color: #FFECB3;
-            border-radius: 1rem;
+        .progress-bar {
+            background-color: #e5e7eb;
+            border-radius: 9999px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
+            height: 1.5rem;
         }
-        .procedure-card:hover {
-            transform: translateY(-5px);
-        }
-        .procedure-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 3px solid #FFB6C1;
+        .progress-fill {
+            background-color: #FFB6C1;
+            height: 100%;
+            transition: width 1s ease-in-out;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <main class="container mx-auto p-4 md:p-8 min-h-screen flex flex-col items-center">
-        <!-- Encabezado de la página -->
-        <header class="text-center my-8">
-            <h1 class="text-5xl md:text-6xl font-extrabold text-salmon-pink">NUKLEIA</h1>
-            <p class="mt-4 text-xl md:text-2xl text-gray-700">Tu aliado en el cuidado de la piel, potenciado por Inteligencia Artificial.</p>
-        </header>
+    <!-- Sección de la imagen principal -->
+    <header>
+        <img src="https://placehold.co/1200x800/F8F5E8/6D4C41?text=NUKLEIA" alt="Rostro de mujer" class="header-image">
+    </header>
 
-        <!-- Introducción y Guía -->
-        <section id="intro-section" class="w-full max-w-4xl custom-card text-center mb-8">
-            <h2 class="text-3xl font-bold mb-4 text-gray-800">¿Qué es NUKLEIA?</h2>
-            <p class="text-gray-600 mb-6 leading-relaxed">NUKLEIA es una herramienta innovadora que utiliza inteligencia artificial avanzada para analizar tu rostro y ofrecerte recomendaciones personalizadas para el cuidado de tu piel. Nuestro objetivo es brindarte un análisis preciso y guiarte hacia las mejores soluciones para lucir una piel radiante y saludable.</p>
-            <h3 class="text-2xl font-semibold mt-8 mb-4 text-gray-800">Cómo usar el análisis facial:</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="flex flex-col items-center p-4 rounded-lg golden-pastel">
+    <!-- Sección de Análisis Facial -->
+    <main class="container mx-auto p-4 md:p-8">
+        <section id="intro-section" class="py-12">
+            <h2 class="text-4xl md:text-5xl font-light text-brown leading-tight">
+                DESCUBRÍ LO QUE TU PIEL <br> NECESITA CON INTELIGENCIA <br> ARTIFICIAL.
+            </h2>
+            <p class="mt-4 text-gray-600 text-lg">
+                Análisis facial personalizado en 30 segundos. Gratis y sin compromiso.
+            </p>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="flex flex-col items-center p-4 rounded-lg bg-beige">
                     <span class="text-4xl mb-2"><i class="fas fa-camera"></i></span>
-                    <p class="font-semibold">1. Habilita tu cámara</p>
-                    <p class="text-sm mt-1 text-gray-600">Asegúrate de tener buena luz y el rostro despejado.</p>
+                    <p class="font-semibold">Paso 1: Preparación</p>
+                    <p class="text-sm mt-1 text-gray-600">Asegúrate de estar en un lugar con buena iluminación y con el rostro despejado.</p>
                 </div>
-                <div class="flex flex-col items-center p-4 rounded-lg golden-pastel">
-                    <span class="text-4xl mb-2"><i class="fas fa-microchip"></i></span>
-                    <p class="font-semibold">2. Análisis inteligente</p>
-                    <p class="text-sm mt-1 text-gray-600">Nuestra IA procesará la imagen en tiempo real para detectar arrugas, la edad de la piel, y más.</p>
+                <div class="flex flex-col items-center p-4 rounded-lg bg-beige">
+                    <span class="text-4xl mb-2"><i class="fas fa-images"></i></span>
+                    <p class="font-semibold">Paso 2: Captura</p>
+                    <p class="text-sm mt-1 text-gray-600">Sube una foto clara de tu rostro o utiliza tu cámara para una captura en vivo.</p>
                 </div>
-                <div class="flex flex-col items-center p-4 rounded-lg golden-pastel">
+                <div class="flex flex-col items-center p-4 rounded-lg bg-beige">
                     <span class="text-4xl mb-2"><i class="fas fa-check-circle"></i></span>
-                    <p class="font-semibold">3. Obtén tus resultados</p>
-                    <p class="text-sm mt-1 text-gray-600">Recibirás un informe detallado con recomendaciones personalizadas.</p>
+                    <p class="font-semibold">Paso 3: Resultados</p>
+                    <p class="text-sm mt-1 text-gray-600">La IA analizará tu piel y te dará un informe completo con recomendaciones.</p>
                 </div>
             </div>
-            <button id="start-analysis-btn" class="mt-8 btn-primary">Comenzar Análisis en Vivo</button>
+            <button id="start-analysis-btn" class="mt-8 btn-primary">HACE TU ESCANEO GRATUITO</button>
         </section>
 
+        <div class="line-divider"></div>
+
         <!-- Sección de Cámara y Análisis (oculta por defecto) -->
-        <section id="analysis-section" class="hidden w-full max-w-4xl custom-card text-center mb-8">
+        <section id="analysis-section" class="hidden w-full max-w-4xl mx-auto custom-card text-center mb-8">
             <h2 class="text-3xl font-bold mb-6 text-gray-800">Análisis Facial en Vivo</h2>
             <div id="video-container" class="mb-4">
                 <video id="camera-feed" class="rounded-lg" autoplay playsinline></video>
@@ -151,52 +146,52 @@
         </section>
 
         <!-- Sección de Resultados (oculta por defecto) -->
-        <section id="results-section" class="hidden w-full max-w-4xl custom-card mb-8">
+        <section id="results-section" class="hidden w-full max-w-4xl mx-auto mb-8">
             <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Tus Resultados de Análisis</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div id="image-container">
                     <img id="analyzed-image" class="rounded-lg w-full h-auto mb-4" src="" alt="Foto analizada">
                 </div>
-                <div>
+                <div class="md:p-4">
                     <h3 class="text-2xl font-semibold mb-4 text-gray-800">Resumen del Análisis de Piel</h3>
                     <div class="mb-4">
-                        <p class="text-lg font-medium">Edad de la piel (Estimada por IA): <span id="skin-age" class="font-bold text-salmon-pink">28 años</span></p>
+                        <p class="text-lg font-medium">Edad de la piel (Estimada por IA): <span id="skin-age" class="font-bold text-gray-800">28 años</span></p>
                         <div class="progress-bar mt-2">
                             <div id="skin-age-progress" class="progress-fill" style="width: 70%;"></div>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <p class="text-lg font-medium">Nivel de arrugas: <span id="wrinkle-level" class="font-bold text-salmon-pink">Leve</span></p>
+                        <p class="text-lg font-medium">Nivel de arrugas: <span id="wrinkle-level" class="font-bold text-gray-800">Leve</span></p>
                         <div class="progress-bar mt-2">
                             <div id="wrinkle-progress" class="progress-fill" style="width: 30%;"></div>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <p class="text-lg font-medium">Uniformidad del tono: <span id="tone-uniformity" class="font-bold text-salmon-pink">Alta</span></p>
+                        <p class="text-lg font-medium">Uniformidad del tono: <span id="tone-uniformity" class="font-bold text-gray-800">Alta</span></p>
                         <div class="progress-bar mt-2">
                             <div id="tone-progress" class="progress-fill" style="width: 90%;"></div>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <p class="text-lg font-medium">Densidad de poros: <span id="pore-density" class="font-bold text-salmon-pink">Baja</span></p>
+                        <p class="text-lg font-medium">Densidad de poros: <span id="pore-density" class="font-bold text-gray-800">Baja</span></p>
                         <div class="progress-bar mt-2">
                             <div id="pore-progress" class="progress-fill" style="width: 25%;"></div>
                         </div>
                     </div>
-                    <h3 class="text-xl font-semibold mt-6 mb-2 text-gray-800">Recomendaciones de NUKLEIA</h3>
-                    <p id="recommendation-text" class="text-gray-600"></p>
                 </div>
             </div>
 
-            <!-- Recomendaciones de Tratamientos -->
+            <!-- Recomendaciones de NUKLEIA -->
             <div class="mt-8">
-                <h3 class="text-3xl font-bold text-center mb-6 text-gray-800">Procedimientos Recomendados para ti</h3>
+                <h3 class="text-3xl font-semibold mb-2 text-center text-brown">Recomendaciones para ti</h3>
+                <p id="recommendation-text" class="text-gray-600 text-center mb-6"></p>
+
+                <h4 class="text-2xl font-semibold mb-4 text-center text-brown">Procedimientos Recomendados</h4>
                 <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Procedimientos dinámicos aquí -->
                 </div>
             </div>
 
-            <!-- Botones de Acción -->
             <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4 mt-10">
                 <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary text-center">
                     Solicitar turno con MB Estética y Salud
@@ -209,8 +204,7 @@
                 </button>
             </div>
         </section>
-
-        <!-- Sección de Popup de Contacto -->
+        
         <div id="contact-popup" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center p-4 z-50">
             <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
                 <h3 class="text-2xl font-bold mb-4 text-gray-800">Contactar a un Dermatólogo</h3>
@@ -231,6 +225,19 @@
                 </form>
             </div>
         </div>
+
+        <div class="line-divider"></div>
+
+        <!-- Sección "¿SOS PROFESIONAL?" -->
+        <section class="py-12">
+            <h3 class="text-4xl md:text-5xl font-light text-brown mb-4">¿SOS PROFESIONAL?</h3>
+            <p class="text-gray-600 mb-6">
+                ¿Querés ofrecer NUKLEIA en tu clínica o gabinete?
+            </p>
+            <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary">
+                CONTÁCTANOS
+            </a>
+        </section>
     </main>
 
     <script>
@@ -253,17 +260,16 @@
             const toneProgress = document.getElementById('tone-progress');
             const poreProgress = document.getElementById('pore-progress');
             const recommendationText = document.getElementById('recommendation-text');
-            const proceduresList = document.getElementById('procedures-list');
             const contactDermBtn = document.getElementById('contact-derm-btn');
             const buySerumBtn = document.getElementById('buy-serum-btn');
             const contactPopup = document.getElementById('contact-popup');
             const closePopupBtn = document.getElementById('close-popup-btn');
+            const proceduresList = document.getElementById('procedures-list');
 
             let cameraStream = null;
 
             // --- Lógica del Flujo de la Página ---
 
-            // Botón para comenzar el análisis y activar la cámara
             startBtn.addEventListener('click', () => {
                 introSection.classList.add('hidden');
                 analysisSection.classList.remove('hidden');
@@ -283,7 +289,6 @@
                     });
             });
 
-            // Botón para tomar la foto y analizar
             takePhotoBtn.addEventListener('click', () => {
                 if (!cameraStream) {
                     errorMessage.textContent = 'Por favor, activa la cámara primero.';
@@ -301,27 +306,22 @@
                 // Detener el stream de la cámara
                 cameraStream.getTracks().forEach(track => track.stop());
 
-                // Mostrar el overlay de "Analizando..."
                 overlay.classList.remove('hidden');
                 
                 setTimeout(() => {
-                    // Ocultar el overlay
                     overlay.classList.add('hidden');
                     analysisSection.classList.add('hidden');
                     resultsSection.classList.remove('hidden');
                     
-                    // Mostrar la imagen capturada
                     const imageDataURL = canvas.toDataURL('image/jpeg');
                     analyzedImage.src = imageDataURL;
                     
-                    // Simular resultados de la IA (estos valores serían dinámicos con una IA real)
                     const results = generateFakeResults();
                     displayResults(results);
 
                 }, 3000); // 3 segundos de espera para simular el análisis
             });
 
-            // Lógica para el popup de contacto
             contactDermBtn.addEventListener('click', () => {
                 contactPopup.classList.remove('hidden');
             });
@@ -329,8 +329,7 @@
             closePopupBtn.addEventListener('click', () => {
                 contactPopup.classList.add('hidden');
             });
-            
-            // Simulación de los resultados de la IA
+
             function generateFakeResults() {
                 const results = {
                     skinAge: Math.floor(Math.random() * (45 - 20 + 1)) + 20,
@@ -339,21 +338,20 @@
                     poreDensity: Math.random(),
                 };
                 
-                let recommendations = `Basado en tu análisis, NUKLEIA SERUM es ideal para ti. Sus componentes clave, los **polinucleótidos** y **exosomas**, derivados del salmón, ayudan a regenerar y revitalizar la piel.`;
+                let recommendations = `Basado en tu análisis, **NUKLEIA SERUM** es ideal para ti. Sus componentes clave, los **polinucleótidos** y **exosomas**, ayudan a regenerar y revitalizar la piel, promoviendo la producción de colágeno y elastina para una piel más joven y radiante.`;
 
                 if (results.wrinkleLevel > 0.6) {
-                    recommendations += ` Se ha detectado una alta presencia de líneas de expresión, por lo que el serum ayudará a suavizarlas estimulando la producción de colágeno y elastina.`;
+                    recommendations += ` Se ha detectado una alta presencia de líneas de expresión, por lo que el serum ayudará a suavizarlas.`;
                 }
                 if (results.toneUniformity < 0.4) {
                     recommendations += ` La falta de uniformidad en el tono de tu piel puede ser tratada con el serum, que promueve la regeneración celular y unifica la pigmentación.`;
                 }
 
                 const procedures = [
-                    { name: 'Facefit', description: 'Un procedimiento de remodelación facial no quirúrgica para mejorar el contorno y la elasticidad.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Facefit' },
-                    { name: 'Limpieza Facial Profunda', description: 'Ayuda a eliminar impurezas, células muertas y puntos negros, mejorando la textura de la piel.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Limpieza+Facial' },
-                    { name: 'Dermapen', description: 'Técnica de micro-punciones que estimula la producción de colágeno, ideal para tratar arrugas y cicatrices.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Dermapen' },
-                    { name: 'Radiofrecuencia', description: 'Tratamiento que utiliza calor para reafirmar la piel, reducir arrugas y mejorar la circulación.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Radiofrecuencia' },
-                    { name: 'Peeling Químico', description: 'Exfoliación profunda para renovar las capas de la piel y mejorar su apariencia.', image: 'https://placehold.co/400x200/FFECB3/FF6347?text=Peeling+Quimico' }
+                    { name: 'Facefit', description: 'Un procedimiento no quirúrgico para mejorar el contorno y la elasticidad facial.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Facefit' },
+                    { name: 'Limpieza Facial Profunda', description: 'Elimina impurezas, células muertas y puntos negros, mejorando la textura de la piel.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Limpieza+Facial' },
+                    { name: 'Dermapen', description: 'Técnica de micro-punciones que estimula la producción de colágeno.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Dermapen' },
+                    { name: 'Radiofrecuencia', description: 'Tratamiento que utiliza calor para reafirmar la piel y reducir arrugas.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Radiofrecuencia' },
                 ];
                 
                 const recommendedProcedures = [];
@@ -369,7 +367,6 @@
                 };
             }
 
-            // Muestra los resultados en la página
             function displayResults(results) {
                 skinAgeEl.textContent = `${results.skinAge} años`;
                 wrinkleLevelEl.textContent = results.wrinkleLevel > 0.7 ? 'Alta' : results.wrinkleLevel > 0.4 ? 'Moderada' : 'Leve';
@@ -386,11 +383,11 @@
                 proceduresList.innerHTML = '';
                 results.procedures.forEach(proc => {
                     const card = document.createElement('div');
-                    card.className = 'procedure-card';
+                    card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden';
                     card.innerHTML = `
-                        <img src="${proc.image}" alt="${proc.name}" class="procedure-image">
+                        <img src="${proc.image}" alt="${proc.name}" class="w-full h-40 object-cover">
                         <div class="p-4">
-                            <h4 class="text-xl font-bold text-gray-800 mb-2">${proc.name}</h4>
+                            <h4 class="text-xl font-bold text-brown mb-2">${proc.name}</h4>
                             <p class="text-gray-600 text-sm">${proc.description}</p>
                         </div>
                     `;
@@ -399,7 +396,5 @@
             }
         });
     </script>
-
 </body>
 </html>
-
