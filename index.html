@@ -94,6 +94,18 @@
             height: 100%;
             transition: width 1s ease-in-out;
         }
+        .result-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .result-item-label {
+            font-weight: 600;
+            width: 50%;
+        }
+        .result-item-value {
+            font-weight: normal;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -151,32 +163,57 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div id="image-container">
                     <img id="analyzed-image" class="rounded-lg w-full h-auto mb-4" src="" alt="Foto analizada">
+                    <div id="future-projection" class="mt-4 p-4 bg-beige rounded-lg text-left">
+                        <h4 class="font-bold text-lg mb-2 text-brown">Proyección de Envejecimiento</h4>
+                        <p class="text-gray-600 text-sm">Sin tratamiento, la piel podría desarrollar mayor flacidez y arrugas profundas en los próximos 5-10 años. <br>
+                        <i class="text-red-500 font-semibold"> (Simulación de IA)</i></p>
+                    </div>
                 </div>
                 <div class="md:p-4">
                     <h3 class="text-2xl font-semibold mb-4 text-gray-800">Resumen del Análisis de Piel</h3>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium">Edad de la piel (Estimada por IA): <span id="skin-age" class="font-bold text-gray-800">28 años</span></p>
-                        <div class="progress-bar mt-2">
-                            <div id="skin-age-progress" class="progress-fill" style="width: 70%;"></div>
-                        </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Edad Biológica de la Piel:</span>
+                        <span class="result-item-value font-bold text-gray-800" id="skin-age">28 años</span>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium">Nivel de arrugas: <span id="wrinkle-level" class="font-bold text-gray-800">Leve</span></p>
-                        <div class="progress-bar mt-2">
-                            <div id="wrinkle-progress" class="progress-fill" style="width: 30%;"></div>
-                        </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Nivel de Arrugas Finas:</span>
+                        <span class="result-item-value" id="fine-wrinkles">Leve</span>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium">Uniformidad del tono: <span id="tone-uniformity" class="font-bold text-gray-800">Alta</span></p>
-                        <div class="progress-bar mt-2">
-                            <div id="tone-progress" class="progress-fill" style="width: 90%;"></div>
-                        </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Nivel de Arrugas Profundas:</span>
+                        <span class="result-item-value" id="deep-wrinkles">Bajo</span>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium">Densidad de poros: <span id="pore-density" class="font-bold text-gray-800">Baja</span></p>
-                        <div class="progress-bar mt-2">
-                            <div id="pore-progress" class="progress-fill" style="width: 25%;"></div>
-                        </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Textura (Poros):</span>
+                        <span class="result-item-value" id="texture">Normal</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Uniformidad del Tono:</span>
+                        <span class="result-item-value" id="tone-uniformity">Alta</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Pigmentación (Manchas/Rojeces):</span>
+                        <span class="result-item-value" id="pigmentation">Baja</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Elasticidad y Firmeza:</span>
+                        <span class="result-item-value" id="firmness">Buena</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Hidratación:</span>
+                        <span class="result-item-value" id="hydration">Normal</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Lesiones/Imperfecciones:</span>
+                        <span class="result-item-value" id="imperfections">Ninguna visible</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Expresión Emocional (IA):</span>
+                        <span class="result-item-value" id="expression">Piel con buen brillo, sin signos de cansancio.</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Morfología (IA):</span>
+                        <span class="result-item-value" id="morphology">Buena simetría y proporciones faciales.</span>
                     </div>
                 </div>
             </div>
@@ -252,13 +289,16 @@
             const errorMessage = document.getElementById('error-message');
             const analyzedImage = document.getElementById('analyzed-image');
             const skinAgeEl = document.getElementById('skin-age');
-            const wrinkleLevelEl = document.getElementById('wrinkle-level');
+            const fineWrinklesEl = document.getElementById('fine-wrinkles');
+            const deepWrinklesEl = document.getElementById('deep-wrinkles');
+            const textureEl = document.getElementById('texture');
             const toneUniformityEl = document.getElementById('tone-uniformity');
-            const poreDensityEl = document.getElementById('pore-density');
-            const skinAgeProgress = document.getElementById('skin-age-progress');
-            const wrinkleProgress = document.getElementById('wrinkle-progress');
-            const toneProgress = document.getElementById('tone-progress');
-            const poreProgress = document.getElementById('pore-progress');
+            const pigmentationEl = document.getElementById('pigmentation');
+            const firmnessEl = document.getElementById('firmness');
+            const hydrationEl = document.getElementById('hydration');
+            const imperfectionsEl = document.getElementById('imperfections');
+            const expressionEl = document.getElementById('expression');
+            const morphologyEl = document.getElementById('morphology');
             const recommendationText = document.getElementById('recommendation-text');
             const contactDermBtn = document.getElementById('contact-derm-btn');
             const buySerumBtn = document.getElementById('buy-serum-btn');
@@ -333,19 +373,19 @@
             function generateFakeResults() {
                 const results = {
                     skinAge: Math.floor(Math.random() * (45 - 20 + 1)) + 20,
-                    wrinkleLevel: Math.random(),
+                    fineWrinkles: Math.random(),
+                    deepWrinkles: Math.random(),
+                    texture: Math.random(),
                     toneUniformity: Math.random(),
-                    poreDensity: Math.random(),
+                    pigmentation: Math.random(),
+                    firmness: Math.random(),
+                    hydration: Math.random(),
+                    imperfections: Math.random(),
+                    expression: Math.random(),
+                    morphology: Math.random(),
                 };
                 
                 let recommendations = `Basado en tu análisis, **NUKLEIA SERUM** es ideal para ti. Sus componentes clave, los **polinucleótidos** y **exosomas**, ayudan a regenerar y revitalizar la piel, promoviendo la producción de colágeno y elastina para una piel más joven y radiante.`;
-
-                if (results.wrinkleLevel > 0.6) {
-                    recommendations += ` Se ha detectado una alta presencia de líneas de expresión, por lo que el serum ayudará a suavizarlas.`;
-                }
-                if (results.toneUniformity < 0.4) {
-                    recommendations += ` La falta de uniformidad en el tono de tu piel puede ser tratada con el serum, que promueve la regeneración celular y unifica la pigmentación.`;
-                }
 
                 const procedures = [
                     { name: 'Facefit', description: 'Un procedimiento no quirúrgico para mejorar el contorno y la elasticidad facial.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Facefit' },
@@ -369,14 +409,16 @@
 
             function displayResults(results) {
                 skinAgeEl.textContent = `${results.skinAge} años`;
-                wrinkleLevelEl.textContent = results.wrinkleLevel > 0.7 ? 'Alta' : results.wrinkleLevel > 0.4 ? 'Moderada' : 'Leve';
+                fineWrinklesEl.textContent = results.fineWrinkles > 0.7 ? 'Alta' : results.fineWrinkles > 0.4 ? 'Moderada' : 'Leve';
+                deepWrinklesEl.textContent = results.deepWrinkles > 0.7 ? 'Alta' : results.deepWrinkles > 0.4 ? 'Moderada' : 'Baja';
+                textureEl.textContent = results.texture > 0.7 ? 'Poros visibles' : results.texture > 0.4 ? 'Textura irregular' : 'Textura uniforme';
                 toneUniformityEl.textContent = results.toneUniformity > 0.7 ? 'Alta' : results.toneUniformity > 0.4 ? 'Moderada' : 'Baja';
-                poreDensityEl.textContent = results.poreDensity > 0.7 ? 'Alta' : results.poreDensity > 0.4 ? 'Moderada' : 'Baja';
-
-                skinAgeProgress.style.width = `${100 - (results.skinAge - 20) * 2.5}%`;
-                wrinkleProgress.style.width = `${results.wrinkleLevel * 100}%`;
-                toneProgress.style.width = `${results.toneUniformity * 100}%`;
-                poreProgress.style.width = `${results.poreDensity * 100}%`;
+                pigmentationEl.textContent = results.pigmentation > 0.7 ? 'Alta' : results.pigmentation > 0.4 ? 'Moderada' : 'Baja';
+                firmnessEl.textContent = results.firmness > 0.7 ? 'Buena' : results.firmness > 0.4 ? 'Normal' : 'Pérdida de volumen';
+                hydrationEl.textContent = results.hydration > 0.7 ? 'Piel hidratada' : results.hydration > 0.4 ? 'Mixta' : 'Piel seca';
+                imperfectionsEl.textContent = results.imperfections > 0.7 ? 'Presencia de acné/cicatrices' : results.imperfections > 0.4 ? 'Imperfecciones leves' : 'Sin imperfecciones';
+                expressionEl.textContent = results.expression > 0.7 ? 'Signos de cansancio y estrés' : 'Piel con buen brillo, sin signos de cansancio.';
+                morphologyEl.textContent = results.morphology > 0.7 ? 'Leve asimetría' : 'Buena simetría y proporciones faciales.';
                 
                 recommendationText.innerHTML = results.recommendationText;
 
