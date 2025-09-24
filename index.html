@@ -278,45 +278,59 @@
     </main>
 
     <script type="module">
-        // IMPORTA LAS LIBRERÍAS DE FIREBASE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // PEGA TU CONFIGURACIÓN DE FIREBASE AQUÍ
+        // Firebase Auth, DB y App ID - NO MODIFICAR, ESTAS VARIABLES SE INYECTAN AUTOMÁTICAMENTE
         const __firebase_config = '{}';
         const __initial_auth_token = '';
         const __app_id = '';
         
+        // --- COMIENZA LA INICIALIZACIÓN DE FIREBASE ---
+        let app, db, auth, userId;
         const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        let userId = '';
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                console.log('Usuario autenticado con ID:', userId);
-            } else {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token.length > 0) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                        console.log('Autenticación con token personalizado exitosa.');
-                    } else {
-                        await signInAnonymously(auth);
-                        console.log('Autenticación anónima exitosa.');
-                    }
-                } catch (error) {
-                    console.error("Error al autenticar:", error);
-                    userId = crypto.randomUUID();
-                }
+        const initFirebase = async () => {
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.error("Firebase no está configurado. Por favor, asegúrate de haber pegado la configuración correcta.");
+                return;
             }
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            await new Promise(resolve => {
+                const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log('Usuario autenticado con ID:', userId);
+                    } else {
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token.length > 0) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                                console.log('Autenticación con token personalizado exitosa.');
+                            } else {
+                                await signInAnonymously(auth);
+                                console.log('Autenticación anónima exitosa.');
+                            }
+                        } catch (error) {
+                            console.error("Error al autenticar:", error);
+                            userId = crypto.randomUUID();
+                        }
+                    }
+                    unsubscribe();
+                    resolve();
+                });
+            });
+        };
+        // --- TERMINA LA INICIALIZACIÓN DE FIREBASE ---
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initFirebase();
+            
             const startBtn = document.getElementById('start-analysis-btn');
             const analysisSection = document.getElementById('analysis-section');
             const introSection = document.getElementById('intro-section');
@@ -343,9 +357,9 @@
             const contactPopup = document.getElementById('contact-popup');
             const closePopupBtn = document.getElementById('close-popup-btn');
             const proceduresList = document.getElementById('procedures-list');
+            const form = document.getElementById('contact-form');
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
-            const form = document.getElementById('contact-form');
 
             let cameraStream = null;
 
@@ -403,16 +417,15 @@
                             date: new Date(),
                             results: results
                         };
-                        const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
-                        await setDoc(userDocRef, { name: analysisData.name, email: analysisData.email }, { merge: true });
-                        const analysisCollRef = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
-                        await addDoc(analysisCollRef, analysisData);
+                        
+                        const analysesCollection = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
+                        await addDoc(analysesCollection, analysisData);
                         console.log("Datos de análisis guardados en Firestore.");
                     } catch (e) {
                         console.error("Error al guardar en Firestore: ", e);
                     }
 
-                }, 3000); // 3 segundos de espera para simular el análisis
+                }, 3000);
             });
 
             contactDermBtn.addEventListener('click', () => {
@@ -496,3 +509,4 @@
     </script>
 </body>
 </html>
+
