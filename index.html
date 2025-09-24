@@ -356,7 +356,7 @@
             const fineWrinklesEl = document.getElementById('fine-wrinkles');
             const deepWrinklesEl = document.getElementById('deep-wrinkles');
             const textureEl = document.getElementById('texture');
-            const toneUniformityEl = document = document.getElementById('tone-uniformity');
+            const toneUniformityEl = document.getElementById('tone-uniformity');
             const pigmentationEl = document.getElementById('pigmentation');
             const firmnessEl = document.getElementById('firmness');
             const hydrationEl = document.getElementById('hydration');
@@ -373,7 +373,7 @@
             let cameraStream = null;
 
             form.addEventListener('submit', (e) => {
-                e.preventDefault();
+                e.preventDefault(); // Esta línea es la que detiene la recarga de la página.
                 userName = nameInput.value;
                 userEmail = emailInput.value;
 
