@@ -277,7 +277,45 @@
         </section>
     </main>
 
-    <script>
+    <script type="module">
+        // IMPORTA LAS LIBRERÍAS DE FIREBASE
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // PEGA TU CONFIGURACIÓN DE FIREBASE AQUÍ
+        const __firebase_config = '{}';
+        const __initial_auth_token = '';
+        const __app_id = '';
+        
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        let userId = '';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                console.log('Usuario autenticado con ID:', userId);
+            } else {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token.length > 0) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                        console.log('Autenticación con token personalizado exitosa.');
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log('Autenticación anónima exitosa.');
+                    }
+                } catch (error) {
+                    console.error("Error al autenticar:", error);
+                    userId = crypto.randomUUID();
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const startBtn = document.getElementById('start-analysis-btn');
             const analysisSection = document.getElementById('analysis-section');
@@ -305,16 +343,16 @@
             const contactPopup = document.getElementById('contact-popup');
             const closePopupBtn = document.getElementById('close-popup-btn');
             const proceduresList = document.getElementById('procedures-list');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const form = document.getElementById('contact-form');
 
             let cameraStream = null;
-
-            // --- Lógica del Flujo de la Página ---
 
             startBtn.addEventListener('click', () => {
                 introSection.classList.add('hidden');
                 analysisSection.classList.remove('hidden');
                 
-                // Pedir permiso para acceder a la cámara
                 navigator.mediaDevices.getUserMedia({ video: true })
                     .then(stream => {
                         cameraStream = stream;
@@ -329,26 +367,24 @@
                     });
             });
 
-            takePhotoBtn.addEventListener('click', () => {
+            takePhotoBtn.addEventListener('click', async () => {
                 if (!cameraStream) {
                     errorMessage.textContent = 'Por favor, activa la cámara primero.';
                     errorMessage.classList.remove('hidden');
                     return;
                 }
 
-                // Crear un canvas para capturar la imagen del video
                 const canvas = document.createElement('canvas');
                 canvas.width = cameraFeed.videoWidth;
                 canvas.height = cameraFeed.videoHeight;
                 const context = canvas.getContext('2d');
                 context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
 
-                // Detener el stream de la cámara
                 cameraStream.getTracks().forEach(track => track.stop());
 
                 overlay.classList.remove('hidden');
                 
-                setTimeout(() => {
+                setTimeout(async () => {
                     overlay.classList.add('hidden');
                     analysisSection.classList.add('hidden');
                     resultsSection.classList.remove('hidden');
@@ -358,6 +394,23 @@
                     
                     const results = generateFakeResults();
                     displayResults(results);
+
+                    try {
+                        const analysisData = {
+                            userId: userId,
+                            name: nameInput.value || 'Anónimo',
+                            email: emailInput.value || 'No proporcionado',
+                            date: new Date(),
+                            results: results
+                        };
+                        const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
+                        await setDoc(userDocRef, { name: analysisData.name, email: analysisData.email }, { merge: true });
+                        const analysisCollRef = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
+                        await addDoc(analysisCollRef, analysisData);
+                        console.log("Datos de análisis guardados en Firestore.");
+                    } catch (e) {
+                        console.error("Error al guardar en Firestore: ", e);
+                    }
 
                 }, 3000); // 3 segundos de espera para simular el análisis
             });
@@ -371,18 +424,21 @@
             });
 
             function generateFakeResults() {
+                const random = () => Math.random();
+                const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
                 const results = {
-                    skinAge: Math.floor(Math.random() * (45 - 20 + 1)) + 20,
-                    fineWrinkles: Math.random(),
-                    deepWrinkles: Math.random(),
-                    texture: Math.random(),
-                    toneUniformity: Math.random(),
-                    pigmentation: Math.random(),
-                    firmness: Math.random(),
-                    hydration: Math.random(),
-                    imperfections: Math.random(),
-                    expression: Math.random(),
-                    morphology: Math.random(),
+                    skinAge: randomInt(20, 45),
+                    fineWrinkles: random(),
+                    deepWrinkles: random(),
+                    texture: random(),
+                    toneUniformity: random(),
+                    pigmentation: random(),
+                    firmness: random(),
+                    hydration: random(),
+                    imperfections: random(),
+                    expression: random(),
+                    morphology: random(),
                 };
                 
                 let recommendations = `Basado en tu análisis, **NUKLEIA SERUM** es ideal para ti. Sus componentes clave, los **polinucleótidos** y **exosomas**, ayudan a regenerar y revitalizar la piel, promoviendo la producción de colágeno y elastina para una piel más joven y radiante.`;
