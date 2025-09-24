@@ -141,7 +141,18 @@
                     <p class="text-sm mt-1 text-gray-600">La IA analizará tu piel y te dará un informe completo con recomendaciones.</p>
                 </div>
             </div>
-            <button id="start-analysis-btn" class="mt-8 btn-primary">HACE TU ESCANEO GRATUITO</button>
+            
+            <form id="user-info-form" class="mt-8 flex flex-col items-center">
+                <div class="mb-4 w-full max-w-sm">
+                    <label for="name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
+                    <input type="text" id="name" name="name" required class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+                <div class="mb-4 w-full max-w-sm">
+                    <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+                <button type="submit" class="mt-4 btn-primary">HACE TU ESCANEO GRATUITO</button>
+            </form>
         </section>
 
         <div class="line-divider"></div>
@@ -248,12 +259,12 @@
                 <p class="text-gray-600 mb-4">Por favor, déjanos tus datos y nos pondremos en contacto contigo.</p>
                 <form id="contact-form">
                     <div class="mb-4">
-                        <label for="name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
-                        <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <label for="popup-name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
+                        <input type="text" id="popup-name" name="name" class="w-full p-2 border border-gray-300 rounded-lg">
                     </div>
                     <div class="mb-4">
-                        <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
-                        <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <label for="popup-email" class="block text-gray-700 font-semibold mb-2">Email</label>
+                        <input type="email" id="popup-email" name="email" class="w-full p-2 border border-gray-300 rounded-lg">
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-popup-btn" class="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full">Cancelar</button>
@@ -287,8 +298,7 @@
         const __initial_auth_token = '';
         const __app_id = '';
         
-        // --- COMIENZA LA INICIALIZACIÓN DE FIREBASE ---
-        let app, db, auth, userId;
+        let app, db, auth, userId, userEmail, userName;
         const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
@@ -326,14 +336,16 @@
                 });
             });
         };
-        // --- TERMINA LA INICIALIZACIÓN DE FIREBASE ---
 
         document.addEventListener('DOMContentLoaded', async () => {
             await initFirebase();
             
-            const startBtn = document.getElementById('start-analysis-btn');
-            const analysisSection = document.getElementById('analysis-section');
             const introSection = document.getElementById('intro-section');
+            const form = document.getElementById('user-info-form');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            
+            const analysisSection = document.getElementById('analysis-section');
             const takePhotoBtn = document.getElementById('take-photo-btn');
             const cameraFeed = document.getElementById('camera-feed');
             const overlay = document.getElementById('overlay');
@@ -344,7 +356,7 @@
             const fineWrinklesEl = document.getElementById('fine-wrinkles');
             const deepWrinklesEl = document.getElementById('deep-wrinkles');
             const textureEl = document.getElementById('texture');
-            const toneUniformityEl = document.getElementById('tone-uniformity');
+            const toneUniformityEl = document = document.getElementById('tone-uniformity');
             const pigmentationEl = document.getElementById('pigmentation');
             const firmnessEl = document.getElementById('firmness');
             const hydrationEl = document.getElementById('hydration');
@@ -357,13 +369,14 @@
             const contactPopup = document.getElementById('contact-popup');
             const closePopupBtn = document.getElementById('close-popup-btn');
             const proceduresList = document.getElementById('procedures-list');
-            const form = document.getElementById('contact-form');
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-
+            
             let cameraStream = null;
 
-            startBtn.addEventListener('click', () => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                userName = nameInput.value;
+                userEmail = emailInput.value;
+
                 introSection.classList.add('hidden');
                 analysisSection.classList.remove('hidden');
                 
@@ -412,8 +425,8 @@
                     try {
                         const analysisData = {
                             userId: userId,
-                            name: nameInput.value || 'Anónimo',
-                            email: emailInput.value || 'No proporcionado',
+                            name: userName,
+                            email: userEmail,
                             date: new Date(),
                             results: results
                         };
