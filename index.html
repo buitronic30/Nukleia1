@@ -12,7 +12,7 @@
 <style>
 body {
 font-family: 'Inter', sans-serif;
-background-color: #FDF9F3; /* Blanco hueso */
+background-color: #FDF9F3; /* Blanco hueso /
 color: #4A4A4A;
 }
 .text-brown {
@@ -106,6 +106,13 @@ width: 50%;
 .result-item-value {
 font-weight: normal;
 }
+/ Corregir la superposición: Ocultar todas las secciones dinámicas por defecto /
+#analysis-section, #results-section, #contact-popup {
+display: none;
+}
+#intro-section {
+display: block; / Mostrar solo la intro por defecto */
+}
 </style>
 </head>
 <body class="antialiased">
@@ -157,7 +164,7 @@ font-weight: normal;
     <div class="line-divider"></div>
 
     <!-- Sección de Cámara y Análisis (oculta por defecto) -->
-    <section id="analysis-section" class="hidden w-full max-w-4xl mx-auto custom-card text-center mb-8">
+    <section id="analysis-section" class="w-full max-w-4xl mx-auto custom-card text-center mb-8">
         <h2 class="text-3xl font-bold mb-6 text-gray-800">Análisis Facial en Vivo</h2>
         <div id="video-container" class="mb-4">
             <video id="camera-feed" class="rounded-lg" autoplay playsinline></video>
@@ -168,7 +175,7 @@ font-weight: normal;
     </section>
 
     <!-- Sección de Resultados (oculta por defecto) -->
-    <section id="results-section" class="hidden w-full max-w-4xl mx-auto mb-8">
+    <section id="results-section" class="w-full max-w-4xl mx-auto mb-8">
         <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Tus Resultados de Análisis</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div id="image-container">
@@ -292,53 +299,68 @@ font-weight: normal;
     import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    // Firebase Auth, DB y App ID - NO MODIFICAR, ESTAS VARIABLES SE INYECTAN AUTOMÁTICAMENTE
-    const __firebase_config = '{}';
+    // **INSTRUCCIÓN CRÍTICA:**
+    // DEBES REEMPLAZAR EL VALOR '{}' POR TU CONFIGURACIÓN COMPLETA DE FIREBASE, 
+    // ASEGURÁNDOTE DE QUE ESTÉ DENTRO DE LAS COMILLAS SIMPLES ''.
+    // Ejemplo: const __firebase_config = '{"apiKey":"AIzaSy...","authDomain":"...","projectId":"..."}';
+    const __firebase_config = '{}'; 
     const __initial_auth_token = '';
     const __app_id = '';
     
     let app, db, auth, userId, userEmail, userName;
-    const firebaseConfig = JSON.parse(__firebase_config);
+    let firebaseConfig;
+    
+    try {
+        firebaseConfig = JSON.parse(__firebase_config);
+    } catch (e) {
+        console.error("ERROR CRÍTICO: La configuración de Firebase no es un JSON válido o falta. Asegúrate de que esté encerrada en comillas simples.");
+        firebaseConfig = {};
+    }
+
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
     const initFirebase = async () => {
-        if (Object.keys(firebaseConfig).length === 0) {
-            console.error("Firebase no está configurado. Por favor, asegúrate de haber pegado la configuración correcta.");
-            return;
+        if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
+            console.error("Firebase no está configurado. La funcionalidad de guardar datos no funcionará.");
+            return false;
         }
 
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-        
-        await new Promise(resolve => {
-            const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    console.log('Usuario autenticado con ID:', userId);
-                } else {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token.length > 0) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                            console.log('Autenticación con token personalizado exitosa.');
-                        } else {
-                            await signInAnonymously(auth);
-                            console.log('Autenticación anónima exitosa.');
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            await new Promise(resolve => {
+                const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                    } else {
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token.length > 0) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                            userId = auth.currentUser.uid;
+                        } catch (error) {
+                            console.error("Error al autenticar:", error);
+                            userId = crypto.randomUUID(); // Fallback ID
                         }
-                    } catch (error) {
-                        console.error("Error al autenticar:", error);
-                        userId = crypto.randomUUID();
                     }
-                }
-                unsubscribe();
-                resolve();
+                    unsubscribe();
+                    resolve();
+                });
             });
-        });
+            return true;
+        } catch (e) {
+            console.error("Error al inicializar Firebase. Revisa tu configuración.", e);
+            return false;
+        }
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
-        await initFirebase();
-        
+        const firebaseReady = await initFirebase();
+
         const introSection = document.getElementById('intro-section');
         const form = document.getElementById('user-info-form');
         const nameInput = document.getElementById('name');
@@ -368,18 +390,25 @@ font-weight: normal;
         const contactPopup = document.getElementById('contact-popup');
         const closePopupBtn = document.getElementById('close-popup-btn');
         const proceduresList = document.getElementById('procedures-list');
-        
+
+        // Asegurar que solo la sección de introducción esté visible al inicio
+        analysisSection.style.display = 'none';
+        resultsSection.style.display = 'none';
+        introSection.style.display = 'block';
+
         let cameraStream = null;
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             userName = nameInput.value;
             userEmail = emailInput.value;
-
-            introSection.classList.add('hidden');
-            analysisSection.classList.remove('hidden');
             
-            navigator.mediaDevices.getUserMedia({ video: true })
+            // Transición a la sección de análisis
+            introSection.style.display = 'none';
+            analysisSection.style.display = 'block';
+            
+            // Iniciar cámara
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }) // Priorizar cámara frontal para selfies
                 .then(stream => {
                     cameraStream = stream;
                     cameraFeed.srcObject = stream;
@@ -388,7 +417,7 @@ font-weight: normal;
                 .catch(err => {
                     console.error("Error al acceder a la cámara: ", err);
                     errorMessage.textContent = 'No se pudo acceder a la cámara. Por favor, verifica los permisos.';
-                    errorMessage.classList.remove('hidden');
+                    errorMessage.style.display = 'block';
                     takePhotoBtn.disabled = true;
                 });
         });
@@ -396,7 +425,7 @@ font-weight: normal;
         takePhotoBtn.addEventListener('click', async () => {
             if (!cameraStream) {
                 errorMessage.textContent = 'Por favor, activa la cámara primero.';
-                errorMessage.classList.remove('hidden');
+                errorMessage.style.display = 'block';
                 return;
             }
 
@@ -406,14 +435,15 @@ font-weight: normal;
             const context = canvas.getContext('2d');
             context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
 
-            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream.getTracks().forEach(track => track.stop()); // Detener cámara
+            cameraFeed.srcObject = null;
 
-            overlay.classList.remove('hidden');
+            overlay.style.opacity = 1; // Mostrar overlay de análisis
             
             setTimeout(async () => {
-                overlay.classList.add('hidden');
-                analysisSection.classList.add('hidden');
-                resultsSection.classList.remove('hidden');
+                overlay.style.opacity = 0;
+                analysisSection.style.display = 'none';
+                resultsSection.style.display = 'block';
                 
                 const imageDataURL = canvas.toDataURL('image/jpeg');
                 analyzedImage.src = imageDataURL;
@@ -421,33 +451,40 @@ font-weight: normal;
                 const results = generateFakeResults();
                 displayResults(results);
 
-                try {
-                    const analysisData = {
-                        userId: userId,
-                        name: userName,
-                        email: userEmail,
-                        date: new Date(),
-                        results: results
-                    };
-                    
-                    const analysesCollection = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
-                    await addDoc(analysesCollection, analysisData);
-                    console.log("Datos de análisis guardados en Firestore.");
-                } catch (e) {
-                    console.error("Error al guardar en Firestore: ", e);
+                if (firebaseReady) {
+                    try {
+                        const analysisData = {
+                            userId: userId,
+                            name: userName,
+                            email: userEmail,
+                            date: new Date(),
+                            results: results
+                        };
+                        
+                        // Ruta de guardado: /artifacts/{appId}/users/{userId}/analyses/{docId}
+                        const analysesCollection = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
+                        await addDoc(analysesCollection, analysisData);
+                        console.log("Datos de análisis guardados en Firestore correctamente.");
+                    } catch (e) {
+                        console.error("Error al guardar en Firestore: ", e);
+                        console.error("Causa probable: Revisa las reglas de seguridad de Firestore o la ruta de la colección.");
+                    }
+                } else {
+                    console.warn("No se pudo guardar en Firestore: Firebase no se inicializó correctamente.");
                 }
 
-            }, 3000);
+            }, 3000); // Simulación de 3 segundos de análisis de IA
         });
 
         contactDermBtn.addEventListener('click', () => {
-            contactPopup.classList.remove('hidden');
+            contactPopup.style.display = 'flex';
         });
 
         closePopupBtn.addEventListener('click', () => {
-            contactPopup.classList.add('hidden');
+            contactPopup.style.display = 'none';
         });
-
+        
+        // Lógica de simulación de resultados y displayResults (sin cambios)
         function generateFakeResults() {
             const random = () => Math.random();
             const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
