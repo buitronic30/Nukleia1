@@ -3,63 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NUKLEIA</title>
+<title>NUKLEIA - Análisis Facial IA</title>
 <script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://www.google.com/search?q=https://fonts.googleapis.com">
 <link rel="preconnect" href="https://www.google.com/search?q=https://fonts.gstatic.com" crossorigin>
-<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DInter:wght%40400%3B500%3B600%3B700%26display%3Dswap" rel="stylesheet">
+<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DInter:wght%40300%3B400%3B600%3B700%26display%3Dswap" rel="stylesheet">
 <link rel="stylesheet" href="https://www.google.com/search?q=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 body {
 font-family: 'Inter', sans-serif;
-background-color: #FDF9F3; /* Blanco hueso /
+background-color: #FDF9F3; /* Blanco hueso para fondo /
 color: #4A4A4A;
+transition: opacity 0.5s ease;
 }
 .text-brown {
-color: #6D4C41;
+color: #6D4C41; / Marrón oscuro para títulos /
 }
 .bg-beige {
-background-color: #F8F5E8;
+background-color: #F8F5E8; / Beige claro para tarjetas /
 }
 .btn-primary {
-background-color: #FFECB3;
+background-color: #FFECB3; / Amarillo pastel /
 color: #6D4C41;
 padding: 0.75rem 2rem;
 border-radius: 9999px;
 font-weight: 600;
 border: 1px solid #6D4C41;
-transition: background-color 0.3s ease, transform 0.2s ease;
+transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .btn-primary:hover {
 background-color: #F8D98C;
 transform: translateY(-2px);
+box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 .line-divider {
 height: 1px;
 background-color: #D3CDBF;
 width: 100%;
-margin: 2rem 0;
+margin: 4rem 0;
 }
 .header-image {
 width: 100%;
-height: auto;
-max-height: 80vh;
+height: 70vh; / Altura fija para móviles y ajustada /
+max-height: 800px;
 object-fit: cover;
-object-position: top;
+object-position: center top;
+filter: brightness(0.95);
 }
-.product-image {
-max-width: 250px;
-width: 100%;
-height: auto;
-}
+/ Contenedor de video/imagen para mantener la proporción y centrado /
 #video-container, #image-container {
 position: relative;
 width: 100%;
-max-width: 600px;
-height: auto;
+max-width: 500px;
+margin: 0 auto;
 border-radius: 1rem;
 overflow: hidden;
-margin: 0 auto;
+background-color: #000;
 }
 #camera-feed, #analyzed-image {
 width: 100%;
@@ -73,47 +73,52 @@ left: 0;
 width: 100%;
 height: 100%;
 display: flex;
+flex-direction: column;
 align-items: center;
 justify-content: center;
-background-color: rgba(0, 0, 0, 0.5);
+background-color: rgba(0, 0, 0, 0.7);
 color: white;
 font-size: 1.5rem;
-font-weight: bold;
+font-weight: 600;
 text-align: center;
 opacity: 0;
-transition: opacity 0.3s ease;
-}
-.progress-bar {
-background-color: #e5e7eb;
-border-radius: 9999px;
-overflow: hidden;
-height: 1.5rem;
-}
-.progress-fill {
-background-color: #FFB6C1;
-height: 100%;
-transition: width 1s ease-in-out;
+transition: opacity 0.5s ease;
+pointer-events: none; / Asegura que no bloquee interacciones /
 }
 .result-item {
 display: flex;
-align-items: center;
-margin-bottom: 0.75rem;
+justify-content: space-between;
+padding: 0.5rem 0;
+border-bottom: 1px solid #EAEAEA;
 }
 .result-item-label {
-font-weight: 600;
-width: 50%;
+font-weight: 500;
 }
-.result-item-value {
-font-weight: normal;
-}
-/ Corregir la superposición: Ocultar todas las secciones dinámicas por defecto /
+/ Aseguramos que solo la sección de inicio se muestre por defecto */
 #analysis-section, #results-section, #contact-popup {
 display: none;
 }
-#intro-section {
-display: block; / Mostrar solo la intro por defecto */
-}
+    /* Ajuste de formulario para centrado */
+    #user-info-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #user-info-form > div {
+        width: 100%;
+        max-width: 400px; /* Ancho máximo para inputs */
+    }
+
+    /* Estilo para las tarjetas de procedimiento */
+    .procedure-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .procedure-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
 </style>
+
 </head>
 <body class="antialiased">
 <!-- Sección de la imagen principal -->
@@ -121,199 +126,232 @@ display: block; / Mostrar solo la intro por defecto */
     <img src="https://placehold.co/1200x800/F8F5E8/6D4C41?text=NUKLEIA" alt="Rostro de mujer" class="header-image">
 </header>
 
-<!-- Sección de Análisis Facial -->
+<!-- Contenedor principal -->
 <main class="container mx-auto p-4 md:p-8">
+
+    <!-- 1. Sección de Introducción y Formulario (Visible por defecto) -->
     <section id="intro-section" class="py-12">
-        <h2 class="text-4xl md:text-5xl font-light text-brown leading-tight">
-            DESCUBRÍ LO QUE TU PIEL <br> NECESITA CON INTELIGENCIA <br> ARTIFICIAL.
+        <h2 class="text-4xl md:text-5xl font-light text-brown leading-tight text-center md:text-left">
+            DESCUBRE LO QUE TU PIEL <br> NECESITA CON INTELIGENCIA <br> ARTIFICIAL.
         </h2>
-        <p class="mt-4 text-gray-600 text-lg">
+        <p class="mt-4 text-gray-600 text-lg text-center md:text-left">
             Análisis facial personalizado en 30 segundos. Gratis y sin compromiso.
         </p>
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div class="flex flex-col items-center p-4 rounded-lg bg-beige">
-                <span class="text-4xl mb-2"><i class="fas fa-camera"></i></span>
-                <p class="font-semibold">Paso 1: Preparación</p>
-                <p class="text-sm mt-1 text-gray-600">Asegúrate de estar en un lugar con buena iluminación y con el rostro despejado.</p>
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center max-w-5xl mx-auto">
+            <div class="flex flex-col items-center p-6 rounded-xl bg-beige shadow-lg">
+                <span class="text-4xl mb-3 text-brown"><i class="fas fa-camera"></i></span>
+                <p class="font-semibold text-gray-800">1. Preparación</p>
+                <p class="text-sm mt-1 text-gray-600">Buena iluminación y rostro despejado. La IA es precisa.</p>
             </div>
-            <div class="flex flex-col items-center p-4 rounded-lg bg-beige">
-                <span class="text-4xl mb-2"><i class="fas fa-images"></i></span>
-                <p class="font-semibold">Paso 2: Captura</p>
-                <p class="text-sm mt-1 text-gray-600">Sube una foto clara de tu rostro o utiliza tu cámara para una captura en vivo.</p>
+            <div class="flex flex-col items-center p-6 rounded-xl bg-beige shadow-lg">
+                <span class="text-4xl mb-3 text-brown"><i class="fas fa-images"></i></span>
+                <p class="font-semibold text-gray-800">2. Captura</p>
+                <p class="text-sm mt-1 text-gray-600">Sube una foto o usa la cámara para una imagen en vivo.</p>
             </div>
-            <div class="flex flex-col items-center p-4 rounded-lg bg-beige">
-                <span class="text-4xl mb-2"><i class="fas fa-check-circle"></i></span>
-                <p class="font-semibold">Paso 3: Resultados</p>
-                <p class="text-sm mt-1 text-gray-600">La IA analizará tu piel y te dará un informe completo con recomendaciones.</p>
+            <div class="flex flex-col items-center p-6 rounded-xl bg-beige shadow-lg">
+                <span class="text-4xl mb-3 text-brown"><i class="fas fa-check-circle"></i></span>
+                <p class="font-semibold text-gray-800">3. Resultados</p>
+                <p class="text-sm mt-1 text-gray-600">Recibe tu informe completo y personalizado en el momento.</p>
             </div>
         </div>
         
-        <form id="user-info-form" class="mt-8 flex flex-col items-center">
-            <div class="mb-4 w-full max-w-sm">
+        <form id="user-info-form" class="mt-12">
+            <p id="firebase-warning" class="text-red-600 text-center mb-4 font-semibold hidden">
+                ⚠ La base de datos no está conectada. Los datos no se guardarán. Por favor, revisa la configuración de Firebase.
+            </p>
+            <div class="mb-4 w-full">
                 <label for="name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
-                <input type="text" id="name" name="name" required class="w-full p-2 border border-gray-300 rounded-lg">
+                <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFECB3]">
             </div>
-            <div class="mb-4 w-full max-w-sm">
+            <div class="mb-6 w-full">
                 <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
-                <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg">
+                <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFECB3]">
             </div>
-            <button type="submit" class="mt-4 btn-primary">HACE TU ESCANEO GRATUITO</button>
+            <button type="submit" class="mt-4 btn-primary w-full max-w-xs">HACER MI ESCANEO GRATUITO</button>
         </form>
     </section>
 
+    <!-- Divisor -->
     <div class="line-divider"></div>
 
-    <!-- Sección de Cámara y Análisis (oculta por defecto) -->
-    <section id="analysis-section" class="w-full max-w-4xl mx-auto custom-card text-center mb-8">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Análisis Facial en Vivo</h2>
-        <div id="video-container" class="mb-4">
-            <video id="camera-feed" class="rounded-lg" autoplay playsinline></video>
-            <div class="overlay hidden" id="overlay">Analizando...</div>
+    <!-- 2. Sección de Cámara y Análisis (Oculta por defecto) -->
+    <section id="analysis-section" class="w-full max-w-4xl mx-auto text-center mb-12">
+        <h2 class="text-3xl font-bold mb-8 text-gray-800">Paso 2: Captura Facial</h2>
+        
+        <div id="video-container" class="mb-6">
+            <video id="camera-feed" class="rounded-xl shadow-2xl" autoplay playsinline></video>
+            <div class="overlay" id="overlay">
+                <i class="fas fa-spinner fa-spin text-4xl mb-2"></i>
+                <p>Analizando...</p>
+            </div>
         </div>
-        <p id="error-message" class="text-red-500 mt-4 hidden"></p>
-        <button id="take-photo-btn" class="btn-primary mt-4">Tomar Foto para Analizar</button>
+        
+        <p id="error-message" class="text-red-500 mt-4 font-medium hidden"></p>
+        <button id="take-photo-btn" class="btn-primary mt-6 disabled:opacity-50 disabled:cursor-not-allowed">
+            Tomar Foto para Analizar
+        </button>
     </section>
 
-    <!-- Sección de Resultados (oculta por defecto) -->
-    <section id="results-section" class="w-full max-w-4xl mx-auto mb-8">
-        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Tus Resultados de Análisis</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div id="image-container">
-                <img id="analyzed-image" class="rounded-lg w-full h-auto mb-4" src="" alt="Foto analizada">
-                <div id="future-projection" class="mt-4 p-4 bg-beige rounded-lg text-left">
-                    <h4 class="font-bold text-lg mb-2 text-brown">Proyección de Envejecimiento</h4>
-                    <p class="text-gray-600 text-sm">Sin tratamiento, la piel podría desarrollar mayor flacidez y arrugas profundas en los próximos 5-10 años. <br>
-                    <i class="text-red-500 font-semibold"> (Simulación de IA)</i></p>
+    <!-- 3. Sección de Resultados (Oculta por defecto) -->
+    <section id="results-section" class="w-full max-w-5xl mx-auto mb-12 p-4 md:p-0">
+        <h2 class="text-4xl font-bold mb-8 text-center text-brown">Tus Resultados de Análisis Personalizado</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-beige p-6 md:p-10 rounded-xl shadow-lg">
+            <!-- Columna de Imagen y Proyección -->
+            <div class="flex flex-col">
+                <div id="image-container" class="shadow-xl">
+                    <img id="analyzed-image" class="rounded-xl w-full h-auto mb-4" src="" alt="Foto analizada">
+                </div>
+                <div id="future-projection" class="mt-6 p-4 rounded-lg text-left border border-gray-300 bg-white">
+                    <h4 class="font-bold text-lg mb-2 text-red-600 flex items-center">
+                        <i class="fas fa-chart-line mr-2"></i> Proyección de Envejecimiento (Sin NUKLEIA)
+                    </h4>
+                    <p class="text-gray-600 text-sm">
+                        El análisis proyecta que, sin un tratamiento específico como NUKLEIA, la piel podría desarrollar mayor flacidez y arrugas profundas en los próximos 5-10 años, especialmente alrededor de los ojos y la boca.
+                    </p>
                 </div>
             </div>
-            <div class="md:p-4">
-                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Resumen del Análisis de Piel</h3>
-                <div class="result-item">
-                    <span class="result-item-label">Edad Biológica de la Piel:</span>
-                    <span class="result-item-value font-bold text-gray-800" id="skin-age">28 años</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Nivel de Arrugas Finas:</span>
-                    <span class="result-item-value" id="fine-wrinkles">Leve</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Nivel de Arrugas Profundas:</span>
-                    <span class="result-item-value" id="deep-wrinkles">Bajo</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Textura (Poros):</span>
-                    <span class="result-item-value" id="texture">Normal</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Uniformidad del Tono:</span>
-                    <span class="result-item-value" id="tone-uniformity">Alta</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Pigmentación (Manchas/Rojeces):</span>
-                    <span class="result-item-value" id="pigmentation">Baja</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Elasticidad y Firmeza:</span>
-                    <span class="result-item-value" id="firmness">Buena</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Hidratación:</span>
-                    <span class="result-item-value" id="hydration">Normal</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Lesiones/Imperfecciones:</span>
-                    <span class="result-item-value" id="imperfections">Ninguna visible</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Expresión Emocional (IA):</span>
-                    <span class="result-item-value" id="expression">Piel con buen brillo, sin signos de cansancio.</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-item-label">Morfología (IA):</span>
-                    <span class="result-item-value" id="morphology">Buena simetría y proporciones faciales.</span>
+
+            <!-- Columna de Métricas y Recomendaciones -->
+            <div class="pt-2">
+                <h3 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Métricas Clave de la Piel</h3>
+                <div id="metrics-summary">
+                    <div class="result-item">
+                        <span class="result-item-label">Edad Biológica de la Piel:</span>
+                        <span class="result-item-value font-bold text-gray-800" id="skin-age">28 años</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Nivel de Arrugas Finas:</span>
+                        <span class="result-item-value" id="fine-wrinkles">Leve</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Nivel de Arrugas Profundas:</span>
+                        <span class="result-item-value" id="deep-wrinkles">Bajo</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Textura (Poros):</span>
+                        <span class="result-item-value" id="texture">Normal</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Uniformidad del Tono:</span>
+                        <span class="result-item-value" id="tone-uniformity">Alta</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Pigmentación (Manchas/Rojeces):</span>
+                        <span class="result-item-value" id="pigmentation">Baja</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Elasticidad y Firmeza:</span>
+                        <span class="result-item-value" id="firmness">Buena</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Hidratación:</span>
+                        <span class="result-item-value" id="hydration">Normal</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Lesiones/Imperfecciones:</span>
+                        <span class="result-item-value" id="imperfections">Ninguna visible</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Expresión Emocional (IA):</span>
+                        <span class="result-item-value" id="expression">Piel con buen brillo, sin signos de cansancio.</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-item-label">Morfología (IA):</span>
+                        <span class="result-item-value" id="morphology">Buena simetría y proporciones.</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Recomendaciones de NUKLEIA -->
-        <div class="mt-8">
-            <h3 class="text-3xl font-semibold mb-2 text-center text-brown">Recomendaciones para ti</h3>
-            <p id="recommendation-text" class="text-gray-600 text-center mb-6"></p>
+        <div class="mt-12">
+            <h3 class="text-3xl font-semibold mb-4 text-center text-brown">Tu Plan de Acción con NUKLEIA</h3>
+            <p id="recommendation-text" class="text-gray-700 text-center mb-10 text-lg p-4 bg-white rounded-lg shadow-md"></p>
 
-            <h4 class="text-2xl font-semibold mb-4 text-center text-brown">Procedimientos Recomendados</h4>
+            <h4 class="text-2xl font-semibold mb-6 text-center text-gray-800">Procedimientos Recomendados por MB Estética</h4>
             <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Procedimientos dinámicos aquí -->
             </div>
         </div>
 
-        <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4 mt-10">
-            <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary text-center">
-                Solicitar turno con MB Estética y Salud
+        <!-- Botones de Contacto -->
+        <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 mt-12">
+            <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary text-center w-full md:w-auto">
+                <i class="fab fa-whatsapp mr-2"></i> Solicitar turno (MB Estética)
             </a>
-            <button id="contact-derm-btn" class="btn-primary text-center">
-                Contactar a un Médico Dermatólogo
+            <button id="contact-derm-btn" class="btn-primary text-center w-full md:w-auto">
+                <i class="fas fa-user-md mr-2"></i> Contactar a un Médico Dermatólogo
             </button>
-            <button id="buy-serum-btn" class="btn-primary text-center">
-                Comprar NUKLEIA Serum
+            <button id="buy-serum-btn" class="btn-primary text-center w-full md:w-auto">
+                <i class="fas fa-shopping-cart mr-2"></i> Comprar NUKLEIA Serum
             </button>
         </div>
     </section>
     
-    <div id="contact-popup" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center p-4 z-50">
-        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
-            <h3 class="text-2xl font-bold mb-4 text-gray-800">Contactar a un Dermatólogo</h3>
-            <p class="text-gray-600 mb-4">Por favor, déjanos tus datos y nos pondremos en contacto contigo.</p>
+    <!-- Pop-up de Contacto (Oculto por defecto) -->
+    <div id="contact-popup" class="hidden fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-center p-4 z-50">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300">
+            <h3 class="text-2xl font-bold mb-4 text-brown">Contactar a un Dermatólogo</h3>
+            <p class="text-gray-600 mb-6">Completa el formulario y nos contactaremos para coordinar una consulta con un especialista.</p>
             <form id="contact-form">
                 <div class="mb-4">
                     <label for="popup-name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
-                    <input type="text" id="popup-name" name="name" class="w-full p-2 border border-gray-300 rounded-lg">
+                    <input type="text" id="popup-name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg">
                 </div>
-                <div class="mb-4">
+                <div class="mb-6">
                     <label for="popup-email" class="block text-gray-700 font-semibold mb-2">Email</label>
-                    <input type="email" id="popup-email" name="email" class="w-full p-2 border border-gray-300 rounded-lg">
+                    <input type="email" id="popup-email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg">
                 </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" id="close-popup-btn" class="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full">Cancelar</button>
-                    <button type="submit" class="btn-primary">Enviar</button>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="close-popup-btn" class="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 transition duration-200">Cancelar</button>
+                    <button type="submit" class="btn-primary">Enviar Solicitud</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Divisor -->
     <div class="line-divider"></div>
 
     <!-- Sección "¿SOS PROFESIONAL?" -->
-    <section class="py-12">
+    <section class="py-12 text-center">
         <h3 class="text-4xl md:text-5xl font-light text-brown mb-4">¿SOS PROFESIONAL?</h3>
-        <p class="text-gray-600 mb-6">
-            ¿Querés ofrecer NUKLEIA en tu clínica o gabinete?
+        <p class="text-gray-600 mb-8 text-xl">
+            ¿Querés ofrecer la tecnología NUKLEIA en tu clínica o gabinete?
         </p>
-        <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary">
-            CONTÁCTANOS
+        <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary text-center">
+            <i class="fas fa-handshake mr-2"></i> CONTÁCTANOS
         </a>
     </section>
 </main>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    // **INSTRUCCIÓN CRÍTICA:**
-    // DEBES REEMPLAZAR EL VALOR '{}' POR TU CONFIGURACIÓN COMPLETA DE FIREBASE, 
-    // ASEGURÁNDOTE DE QUE ESTÉ DENTRO DE LAS COMILLAS SIMPLES ''.
-    // Ejemplo: const __firebase_config = '{"apiKey":"AIzaSy...","authDomain":"...","projectId":"..."}';
+    // ***********************************************************************************
+    // ********************** INSTRUCCIÓN CRÍTICA DE FIREBASE ***************************
+    // ***********************************************************************************
+    // DEBES PEGAR TU OBJETO DE CONFIGURACIÓN COMPLETO DENTRO DE LAS COMILLAS SIMPLES ''.
+    // SI NO ESTÁ DENTRO DE COMILLAS, FALLARÁ.
+    // Ejemplo correcto: const __firebase_config = '{"apiKey":"AIzaSy...","authDomain":"...","projectId":"..."}';
+    // Ejemplo actual (modificar):
     const __firebase_config = '{}'; 
     const __initial_auth_token = '';
     const __app_id = '';
     
     let app, db, auth, userId, userEmail, userName;
     let firebaseConfig;
+    let firebaseReady = false;
     
     try {
+        // Intenta parsear la cadena de configuración (si está vacía, fallará en la inicialización, no en el parseo)
         firebaseConfig = JSON.parse(__firebase_config);
     } catch (e) {
-        console.error("ERROR CRÍTICO: La configuración de Firebase no es un JSON válido o falta. Asegúrate de que esté encerrada en comillas simples.");
+        console.error("ERROR CRÍTICO: La configuración de Firebase no es un JSON válido. Revisa las comillas simples.");
+        document.getElementById('firebase-warning').style.display = 'block';
         firebaseConfig = {};
     }
 
@@ -321,7 +359,8 @@ display: block; / Mostrar solo la intro por defecto */
 
     const initFirebase = async () => {
         if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
-            console.error("Firebase no está configurado. La funcionalidad de guardar datos no funcionará.");
+            console.error("Firebase no está configurado o el API Key falta.");
+            document.getElementById('firebase-warning').style.display = 'block';
             return false;
         }
 
@@ -344,23 +383,28 @@ display: block; / Mostrar solo la intro por defecto */
                             userId = auth.currentUser.uid;
                         } catch (error) {
                             console.error("Error al autenticar:", error);
-                            userId = crypto.randomUUID(); // Fallback ID
+                            userId = crypto.randomUUID(); // ID de respaldo
                         }
                     }
                     unsubscribe();
                     resolve();
                 });
             });
+            firebaseReady = true;
+            document.getElementById('firebase-warning').style.display = 'none';
+            console.log("Firebase inicializado y usuario autenticado:", userId);
             return true;
         } catch (e) {
             console.error("Error al inicializar Firebase. Revisa tu configuración.", e);
+            document.getElementById('firebase-warning').style.display = 'block';
             return false;
         }
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
-        const firebaseReady = await initFirebase();
+        await initFirebase(); // Intenta inicializar Firebase al cargar la página
 
+        // Referencias a elementos
         const introSection = document.getElementById('intro-section');
         const form = document.getElementById('user-info-form');
         const nameInput = document.getElementById('name');
@@ -373,46 +417,46 @@ display: block; / Mostrar solo la intro por defecto */
         const resultsSection = document.getElementById('results-section');
         const errorMessage = document.getElementById('error-message');
         const analyzedImage = document.getElementById('analyzed-image');
-        const skinAgeEl = document.getElementById('skin-age');
-        const fineWrinklesEl = document.getElementById('fine-wrinkles');
-        const deepWrinklesEl = document.getElementById('deep-wrinkles');
-        const textureEl = document.getElementById('texture');
-        const toneUniformityEl = document.getElementById('tone-uniformity');
-        const pigmentationEl = document.getElementById('pigmentation');
-        const firmnessEl = document.getElementById('firmness');
-        const hydrationEl = document.getElementById('hydration');
-        const imperfectionsEl = document.getElementById('imperfections');
-        const expressionEl = document.getElementById('expression');
-        const morphologyEl = document.getElementById('morphology');
-        const recommendationText = document.getElementById('recommendation-text');
-        const contactDermBtn = document.getElementById('contact-derm-btn');
-        const buySerumBtn = document.getElementById('buy-serum-btn');
         const contactPopup = document.getElementById('contact-popup');
         const closePopupBtn = document.getElementById('close-popup-btn');
+        const contactDermBtn = document.getElementById('contact-derm-btn');
         const proceduresList = document.getElementById('procedures-list');
 
-        // Asegurar que solo la sección de introducción esté visible al inicio
-        analysisSection.style.display = 'none';
-        resultsSection.style.display = 'none';
-        introSection.style.display = 'block';
+        // Mapeo de elementos de resultados
+        const resultElements = {
+            skinAge: document.getElementById('skin-age'),
+            fineWrinkles: document.getElementById('fine-wrinkles'),
+            deepWrinkles: document.getElementById('deep-wrinkles'),
+            texture: document.getElementById('texture'),
+            toneUniformity: document.getElementById('tone-uniformity'),
+            pigmentation: document.getElementById('pigmentation'),
+            firmness: document.getElementById('firmness'),
+            hydration: document.getElementById('hydration'),
+            imperfections: document.getElementById('imperfections'),
+            expression: document.getElementById('expression'),
+            morphology: document.getElementById('morphology'),
+            recommendationText: document.getElementById('recommendation-text')
+        };
 
         let cameraStream = null;
 
+        // Transición de Introducción a Análisis
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             userName = nameInput.value;
             userEmail = emailInput.value;
             
-            // Transición a la sección de análisis
             introSection.style.display = 'none';
             analysisSection.style.display = 'block';
             
-            // Iniciar cámara
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }) // Priorizar cámara frontal para selfies
+            // Iniciar cámara con permisos frontales
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
                 .then(stream => {
                     cameraStream = stream;
                     cameraFeed.srcObject = stream;
                     cameraFeed.play();
+                    errorMessage.style.display = 'none';
+                    takePhotoBtn.disabled = false;
                 })
                 .catch(err => {
                     console.error("Error al acceder a la cámara: ", err);
@@ -422,12 +466,9 @@ display: block; / Mostrar solo la intro por defecto */
                 });
         });
 
+        // Captura de Foto y Análisis (Simulado)
         takePhotoBtn.addEventListener('click', async () => {
-            if (!cameraStream) {
-                errorMessage.textContent = 'Por favor, activa la cámara primero.';
-                errorMessage.style.display = 'block';
-                return;
-            }
+            if (!cameraStream) return;
 
             const canvas = document.createElement('canvas');
             canvas.width = cameraFeed.videoWidth;
@@ -435,22 +476,27 @@ display: block; / Mostrar solo la intro por defecto */
             const context = canvas.getContext('2d');
             context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
 
-            cameraStream.getTracks().forEach(track => track.stop()); // Detener cámara
+            // Detener cámara
+            cameraStream.getTracks().forEach(track => track.stop());
             cameraFeed.srcObject = null;
 
-            overlay.style.opacity = 1; // Mostrar overlay de análisis
+            // Mostrar simulación de análisis
+            overlay.style.opacity = 1;
+            takePhotoBtn.disabled = true;
             
             setTimeout(async () => {
                 overlay.style.opacity = 0;
                 analysisSection.style.display = 'none';
                 resultsSection.style.display = 'block';
-                
-                const imageDataURL = canvas.toDataURL('image/jpeg');
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Subir a los resultados
+
+                const imageDataURL = canvas.toDataURL('image/jpeg', 0.8);
                 analyzedImage.src = imageDataURL;
                 
                 const results = generateFakeResults();
                 displayResults(results);
 
+                // Guardar en Firestore
                 if (firebaseReady) {
                     try {
                         const analysisData = {
@@ -461,36 +507,70 @@ display: block; / Mostrar solo la intro por defecto */
                             results: results
                         };
                         
-                        // Ruta de guardado: /artifacts/{appId}/users/{userId}/analyses/{docId}
+                        // Ruta: /artifacts/{appId}/users/{userId}/analyses
                         const analysesCollection = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
                         await addDoc(analysesCollection, analysisData);
-                        console.log("Datos de análisis guardados en Firestore correctamente.");
+                        console.log("Datos de análisis guardados en Firestore.");
                     } catch (e) {
-                        console.error("Error al guardar en Firestore: ", e);
-                        console.error("Causa probable: Revisa las reglas de seguridad de Firestore o la ruta de la colección.");
+                        console.error("Error al guardar en Firestore (revisar reglas de seguridad): ", e);
+                        document.getElementById('firebase-warning').style.display = 'block';
                     }
                 } else {
                     console.warn("No se pudo guardar en Firestore: Firebase no se inicializó correctamente.");
                 }
 
-            }, 3000); // Simulación de 3 segundos de análisis de IA
+            }, 4000); // Simulación de 4 segundos de análisis de IA
         });
 
+        // Lógica de Pop-up de Contacto
         contactDermBtn.addEventListener('click', () => {
+            const popupNameInput = document.getElementById('popup-name');
+            const popupEmailInput = document.getElementById('popup-email');
+            
+            // Precargar datos
+            popupNameInput.value = userName || '';
+            popupEmailInput.value = userEmail || '';
+
             contactPopup.style.display = 'flex';
         });
 
         closePopupBtn.addEventListener('click', () => {
             contactPopup.style.display = 'none';
         });
-        
-        // Lógica de simulación de resultados y displayResults (sin cambios)
+
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            contactPopup.style.display = 'none';
+            
+            if (firebaseReady) {
+                try {
+                    const contactData = {
+                        userId: userId,
+                        name: document.getElementById('popup-name').value,
+                        email: document.getElementById('popup-email').value,
+                        date: new Date(),
+                        type: 'Dermatologist Contact'
+                    };
+                    
+                    // Ruta: /artifacts/{appId}/users/{userId}/contacts
+                    const contactsCollection = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
+                    await addDoc(contactsCollection, contactData);
+                    console.log("Datos de contacto guardados en Firestore.");
+                    // Aquí podrías mostrar un mensaje de éxito al usuario
+                } catch (e) {
+                    console.error("Error al guardar contacto en Firestore: ", e);
+                }
+            }
+        });
+
+
+        // Funciones de Simulación y Display
         function generateFakeResults() {
             const random = () => Math.random();
             const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
             const results = {
-                skinAge: randomInt(20, 45),
+                skinAge: randomInt(26, 42),
                 fineWrinkles: random(),
                 deepWrinkles: random(),
                 texture: random(),
@@ -503,16 +583,17 @@ display: block; / Mostrar solo la intro por defecto */
                 morphology: random(),
             };
             
-            let recommendations = `Basado en tu análisis, **NUKLEIA SERUM** es ideal para ti. Sus componentes clave, los **polinucleótidos** y **exosomas**, ayudan a regenerar y revitalizar la piel, promoviendo la producción de colágeno y elastina para una piel más joven y radiante.`;
+            let recommendations = `Tu piel tiene una edad biológica de **${results.skinAge} años**. Presenta una buena firmeza, pero se observa una tendencia a **arrugas finas** y una ligera **falta de hidratación**. Por ello, el **NUKLEIA SERUM** es esencial. Sus **polinucleótidos** y **exosomas** actuarán directamente en la regeneración celular y la retención de agua, previniendo el envejecimiento prematuro y mejorando la luminosidad.`;
 
             const procedures = [
-                { name: 'Facefit', description: 'Un procedimiento no quirúrgico para mejorar el contorno y la elasticidad facial.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Facefit' },
-                { name: 'Limpieza Facial Profunda', description: 'Elimina impurezas, células muertas y puntos negros, mejorando la textura de la piel.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Limpieza+Facial' },
-                { name: 'Dermapen', description: 'Técnica de micro-punciones que estimula la producción de colágeno.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Dermapen' },
-                { name: 'Radiofrecuencia', description: 'Tratamiento que utiliza calor para reafirmar la piel y reducir arrugas.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Radiofrecuencia' },
+                { name: 'Facefit Pro', description: 'Tratamiento no invasivo para tonificar y definir el óvalo facial, estimulando el colágeno.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Facefit+Pro' },
+                { name: 'Mesoterapia Revitalizante', description: 'Microinyecciones de vitaminas y ácido hialurónico para hidratación profunda y luminosidad.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Mesoterapia' },
+                { name: 'Limpieza Facial Detox', description: 'Limpieza profunda con aparatología para eliminar toxinas y mejorar la textura general de la piel.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Limpieza+Detox' },
+                { name: 'Peeling Suave', description: 'Renovación de la capa superficial de la piel para tratar manchas leves y mejorar el tono.', image: 'https://placehold.co/400x250/F8F5E8/6D4C41?text=Peeling+Suave' },
             ];
             
             const recommendedProcedures = [];
+            // Selecciona 3 procedimientos al azar
             for (let i = 0; i < 3; i++) {
                 const randomIndex = Math.floor(Math.random() * procedures.length);
                 recommendedProcedures.push(procedures.splice(randomIndex, 1)[0]);
@@ -526,27 +607,35 @@ display: block; / Mostrar solo la intro por defecto */
         }
 
         function displayResults(results) {
-            skinAgeEl.textContent = `${results.skinAge} años`;
-            fineWrinklesEl.textContent = results.fineWrinkles > 0.7 ? 'Alta' : results.fineWrinkles > 0.4 ? 'Moderada' : 'Leve';
-            deepWrinklesEl.textContent = results.deepWrinkles > 0.7 ? 'Alta' : results.deepWrinkles > 0.4 ? 'Moderada' : 'Baja';
-            textureEl.textContent = results.texture > 0.7 ? 'Poros visibles' : results.texture > 0.4 ? 'Textura irregular' : 'Textura uniforme';
-            toneUniformityEl.textContent = results.toneUniformity > 0.7 ? 'Alta' : results.toneUniformity > 0.4 ? 'Moderada' : 'Baja';
-            pigmentationEl.textContent = results.pigmentation > 0.7 ? 'Alta' : results.pigmentation > 0.4 ? 'Moderada' : 'Baja';
-            firmnessEl.textContent = results.firmness > 0.7 ? 'Buena' : results.firmness > 0.4 ? 'Normal' : 'Pérdida de volumen';
-            hydrationEl.textContent = results.hydration > 0.7 ? 'Piel hidratada' : results.hydration > 0.4 ? 'Mixta' : 'Piel seca';
-            imperfectionsEl.textContent = results.imperfections > 0.7 ? 'Presencia de acné/cicatrices' : results.imperfections > 0.4 ? 'Imperfecciones leves' : 'Sin imperfecciones';
-            expressionEl.textContent = results.expression > 0.7 ? 'Signos de cansancio y estrés' : 'Piel con buen brillo, sin signos de cansancio.';
-            morphologyEl.textContent = results.morphology > 0.7 ? 'Leve asimetría' : 'Buena simetría y proporciones faciales.';
-            
-            recommendationText.innerHTML = results.recommendationText;
+            // Función auxiliar para mapear valores 0-1 a texto
+            const mapLevel = (value) => {
+                if (value > 0.7) return 'Alta';
+                if (value > 0.4) return 'Moderada';
+                return 'Baja';
+            };
 
+            resultElements.skinAge.textContent = `${results.skinAge} años`;
+            resultElements.fineWrinkles.textContent = mapLevel(results.fineWrinkles);
+            resultElements.deepWrinkles.textContent = results.deepWrinkles > 0.6 ? 'Moderada' : 'Baja';
+            resultElements.texture.textContent = results.texture > 0.6 ? 'Poros visibles/Irregular' : 'Uniforme y suave';
+            resultElements.toneUniformity.textContent = results.toneUniformity > 0.7 ? 'Alta' : 'Necesita unificar';
+            resultElements.pigmentation.textContent = results.pigmentation > 0.7 ? 'Presencia de Manchas' : 'Baja';
+            resultElements.firmness.textContent = results.firmness > 0.7 ? 'Excelente' : results.firmness > 0.4 ? 'Buena' : 'Pérdida de elasticidad';
+            resultElements.hydration.textContent = results.hydration > 0.7 ? 'Óptima' : 'Normal/Necesita refuerzo';
+            resultElements.imperfections.textContent = results.imperfections > 0.6 ? 'Acné o Lesiones leves' : 'Sin imperfecciones';
+            resultElements.expression.textContent = results.expression > 0.7 ? 'Cansancio visible' : 'Piel con buen brillo, sin signos de cansancio.';
+            resultElements.morphology.textContent = results.morphology > 0.7 ? 'Asimetría leve/media' : 'Buena simetría y proporciones.';
+            
+            resultElements.recommendationText.innerHTML = results.recommendationText;
+
+            // Renderizar procedimientos
             proceduresList.innerHTML = '';
             results.procedures.forEach(proc => {
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden';
+                card.className = 'bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden procedure-card';
                 card.innerHTML = `
-                    <img src="${proc.image}" alt="${proc.name}" class="w-full h-40 object-cover">
-                    <div class="p-4">
+                    <img src="${proc.image}" alt="${proc.name}" class="w-full h-48 object-cover">
+                    <div class="p-4 md:p-6">
                         <h4 class="text-xl font-bold text-brown mb-2">${proc.name}</h4>
                         <p class="text-gray-600 text-sm">${proc.description}</p>
                     </div>
