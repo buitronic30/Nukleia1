@@ -330,15 +330,16 @@ display: none;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-    // ***********************************************************************************
-    // ********************** INSTRUCCIÓN CRÍTICA DE FIREBASE ***************************
-    // ***********************************************************************************
-    // DEBES PEGAR TU OBJETO DE CONFIGURACIÓN COMPLETO DENTRO DE LAS COMILLAS SIMPLES ''.
-    // SI NO ESTÁ DENTRO DE COMILLAS, FALLARÁ.
-    // Ejemplo correcto: const __firebase_config = '{"apiKey":"AIzaSy...","authDomain":"...","projectId":"..."}';
-    // Ejemplo actual (modificar):
-    const __firebase_config = '{}'; 
+    
+    const __firebase_config = '{
+    apiKey: "AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo",
+    authDomain: "nukleia-web.firebaseapp.com",
+    projectId: "nukleia-web",
+    storageBucket: "nukleia-web.firebasestorage.app",
+    messagingSenderId: "925270420611",
+    appId: "1:925270420611:web:7ef1d8c6e01e8c1df37fb6",
+    measurementId: "G-CGQV62HY8Y"
+}'; 
     const __initial_auth_token = '';
     const __app_id = '';
     
