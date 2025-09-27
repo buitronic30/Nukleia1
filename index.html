@@ -7,7 +7,7 @@
 <script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://www.google.com/search?q=https://fonts.googleapis.com">
 <link rel="preconnect" href="https://www.google.com/search?q=https://fonts.gstatic.com" crossorigin>
-<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DInter:wght%40300%3B400%3B600%3B700%26display%3Dswap" rel="stylesheet">
+<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DInter:wght%40300%3B400%3B500%3B600%3B700%26display%3Dswap" rel="stylesheet">
 <link rel="stylesheet" href="https://www.google.com/search?q=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 body {
@@ -94,11 +94,14 @@ border-bottom: 1px solid #EAEAEA;
 .result-item-label {
 font-weight: 500;
 }
-/ Aseguramos que solo la sección de inicio se muestre por defecto */
+/ Corregido: Aseguramos que solo la sección de introducción esté visible al inicio */
 #analysis-section, #results-section, #contact-popup {
 display: none;
 }
-    /* Ajuste de formulario para centrado */
+#intro-section {
+display: block;
+}
+    /* Ajuste de formulario para centrado responsive */
     #user-info-form {
         display: flex;
         flex-direction: column;
@@ -330,16 +333,12 @@ display: none;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    
-    const __firebase_config = '{
-    apiKey: "AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo",
-    authDomain: "nukleia-web.firebaseapp.com",
-    projectId: "nukleia-web",
-    storageBucket: "nukleia-web.firebasestorage.app",
-    messagingSenderId: "925270420611",
-    appId: "1:925270420611:web:7ef1d8c6e01e8c1df37fb6",
-    measurementId: "G-CGQV62HY8Y"
-}'; 
+
+    // ************************************************************************************************************************************
+    // ** INSTRUCCIÓN CRÍTICA FINAL **
+    // REEMPLAZA LA LÍNEA DE ABAJO CON TU CONFIGURACIÓN. DEBE ESTAR TODO DENTRO DE LAS COMILLAS SIMPLES, CON CLAVES Y VALORES EN COMILLAS DOBLES.
+    // ************************************************************************************************************************************
+    const __firebase_config = '{"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"}'; 
     const __initial_auth_token = '';
     const __app_id = '';
     
@@ -348,11 +347,10 @@ display: none;
     let firebaseReady = false;
     
     try {
-        // Intenta parsear la cadena de configuración (si está vacía, fallará en la inicialización, no en el parseo)
+        // Se asume que el usuario pegó la configuración en formato JSON correcto
         firebaseConfig = JSON.parse(__firebase_config);
     } catch (e) {
-        console.error("ERROR CRÍTICO: La configuración de Firebase no es un JSON válido. Revisa las comillas simples.");
-        document.getElementById('firebase-warning').style.display = 'block';
+        console.error("ERROR CRÍTICO: La configuración de Firebase no es un JSON válido.", e);
         firebaseConfig = {};
     }
 
@@ -393,7 +391,6 @@ display: none;
             });
             firebaseReady = true;
             document.getElementById('firebase-warning').style.display = 'none';
-            console.log("Firebase inicializado y usuario autenticado:", userId);
             return true;
         } catch (e) {
             console.error("Error al inicializar Firebase. Revisa tu configuración.", e);
@@ -403,7 +400,8 @@ display: none;
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
-        await initFirebase(); // Intenta inicializar Firebase al cargar la página
+        // Llamada crucial: La página espera que Firebase se inicialice
+        await initFirebase(); 
 
         // Referencias a elementos
         const introSection = document.getElementById('intro-section');
@@ -514,6 +512,7 @@ display: none;
                         console.log("Datos de análisis guardados en Firestore.");
                     } catch (e) {
                         console.error("Error al guardar en Firestore (revisar reglas de seguridad): ", e);
+                        // Mantenemos la advertencia visible en caso de error de escritura
                         document.getElementById('firebase-warning').style.display = 'block';
                     }
                 } else {
@@ -557,7 +556,6 @@ display: none;
                     const contactsCollection = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
                     await addDoc(contactsCollection, contactData);
                     console.log("Datos de contacto guardados en Firestore.");
-                    // Aquí podrías mostrar un mensaje de éxito al usuario
                 } catch (e) {
                     console.error("Error al guardar contacto en Firestore: ", e);
                 }
