@@ -247,293 +247,348 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 </main>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+// Configuracion de Firebase: NO MODIFICAR ESTA LINEA.
+// La configuración debe estar insertada por el usuario en el entorno
+// Este valor ya contiene la configuración de nukleia-web que me proporcionaste.
+const __firebase_config = '{"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"}';
+const __initial_auth_token = '';
+const __app_id = '';
+// Firebase Imports
+import { initializeApp } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js&quot;;
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js&quot;;
+import { getFirestore, doc, setDoc, collection, query, where, addDoc } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js&quot;;
+import { setLogLevel } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js&quot;;
 
-    const __firebase_config = '{"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"}'; 
-    const __initial_auth_token = '';
-    const __app_id = '';
-    
-    let app, db, auth, userId, userEmail, userName;
-    let firebaseConfig;
-    let firebaseReady = false;
-    
+setLogLevel(&#39;error&#39;); // Usar &#39;error&#39; para no saturar la consola.
+
+let app, db, auth, userId = null, userName = &#39;&#39;, userEmail = &#39;&#39;;
+
+// Configuración y variables por defecto
+const firebaseConfig = JSON.parse(__firebase_config);
+const appId = typeof __app_id !== &#39;undefined&#39; ? __app_id : &#39;default-app-id&#39;;
+
+const elements = {
+    scanBtn: document.getElementById(&#39;scan-btn&#39;),
+    introSection: document.getElementById(&#39;intro-section&#39;),
+    formSection: document.getElementById(&#39;form-section&#39;),
+    analysisSection: document.getElementById(&#39;analysis-section&#39;),
+    resultsSection: document.getElementById(&#39;results-section&#39;),
+    cameraFeed: document.getElementById(&#39;camera-feed&#39;),
+    photoCanvas: document.getElementById(&#39;photo-canvas&#39;),
+    photoBtn: document.getElementById(&#39;photo-btn&#39;),
+    backBtn: document.getElementById(&#39;back-btn&#39;),
+    analizingSpinner: document.getElementById(&#39;analizing-spinner&#39;),
+    resultsContainer: document.getElementById(&#39;results-container&#39;),
+    userPhotoContainer: document.getElementById(&#39;user-photo-container&#39;),
+    userNameInput: document.getElementById(&#39;user-name&#39;),
+    userEmailInput: document.getElementById(&#39;user-email&#39;),
+    dataForm: document.getElementById(&#39;data-form&#39;),
+    firebaseWarning: document.getElementById(&#39;firebase-warning&#39;)
+};
+
+let videoStream = null;
+let cameraContext = elements.photoCanvas.getContext(&#39;2d&#39;);
+
+// --- 1. Inicialización de Firebase y Autenticación ---
+
+const initFirebase = async () =&gt; {
     try {
-        firebaseConfig = JSON.parse(__firebase_config);
-    } catch (e) {
-        console.error("ERROR CRÍTICO: La configuración de Firebase no es un JSON válido o falta. Se mostrará la advertencia.", e);
-        firebaseConfig = {};
+        app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Listener de autenticación
+        onAuthStateChanged(auth, async (user) =&gt; {
+            if (user) {
+                userId = user.uid;
+                console.log(&quot;Firebase conectado. User ID:&quot;, userId);
+                elements.firebaseWarning.classList.add(&#39;hidden&#39;);
+            } else {
+                console.log(&quot;Iniciando sesión anónima...&quot;);
+                await signInAnonymously(auth);
+            }
+        });
+
+    } catch (error) {
+        console.error(&quot;Error al inicializar Firebase:&quot;, error);
+        elements.firebaseWarning.classList.remove(&#39;hidden&#39;);
     }
+};
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+// --- 2. Funciones de Navegación y Cámara ---
 
-    const initFirebase = async () => {
-        if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
-            console.error("Firebase no está configurado o el API Key falta.");
-            document.getElementById('firebase-warning').style.display = 'block';
-            return false;
-        }
+const startCamera = async () =&gt; {
+    elements.formSection.classList.add(&#39;hidden&#39;);
+    elements.analysisSection.classList.remove(&#39;hidden&#39;);
 
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            await new Promise(resolve => {
-                const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                    } else {
-                        try {
-                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token.length > 0) {
-                                await signInWithCustomToken(auth, __initial_auth_token);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                            userId = auth.currentUser.uid;
-                        } catch (error) {
-                            console.error("Error al autenticar:", error);
-                            userId = crypto.randomUUID(); // ID de respaldo
-                        }
-                    }
-                    unsubscribe();
-                    resolve();
-                });
-            });
-            firebaseReady = true;
-            document.getElementById('firebase-warning').style.display = 'none';
-            return true;
-        } catch (e) {
-            console.error("Error al inicializar Firebase. Revisa tu configuración. Causa posible: Dominio no autorizado en Firebase.", e);
-            document.getElementById('firebase-warning').style.display = 'block';
-            return false;
-        }
+    // Configurar el canvas para ser responsive
+    const updateCanvasSize = () =&gt; {
+        const width = elements.cameraFeed.clientWidth;
+        elements.cameraFeed.width = width;
+        elements.cameraFeed.height = width * (3 / 4); // Aspecto 4:3
+        elements.photoCanvas.width = width;
+        elements.photoCanvas.height = width * (3 / 4);
+    };
+    updateCanvasSize();
+    window.addEventListener(&#39;resize&#39;, updateCanvasSize);
+
+
+    try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: &quot;user&quot; } });
+        elements.cameraFeed.srcObject = videoStream;
+        elements.cameraFeed.play();
+    } catch (err) {
+        alertMessage(&#39;Error al acceder a la cámara. Asegúrate de tener permisos y estar en un protocolo seguro (HTTPS).&#39;, &#39;error&#39;);
+        console.error(&quot;Error al acceder a la cámara:&quot;, err);
+        elements.analysisSection.classList.add(&#39;hidden&#39;);
+        elements.formSection.classList.remove(&#39;hidden&#39;);
+    }
+};
+
+const stopCamera = () =&gt; {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track =&gt; track.stop());
+        videoStream = null;
+    }
+};
+
+const takePhoto = () =&gt; {
+    const width = elements.cameraFeed.videoWidth;
+    const height = elements.cameraFeed.videoHeight;
+
+    // Establecer el canvas con el tamaño real del video para mejor resolución.
+    elements.photoCanvas.width = width;
+    elements.photoCanvas.height = height;
+
+    // Dibujar el fotograma actual en el canvas
+    cameraContext.drawImage(elements.cameraFeed, 0, 0, width, height);
+    stopCamera();
+
+    elements.cameraFeed.classList.add(&#39;hidden&#39;);
+    elements.photoCanvas.classList.remove(&#39;hidden&#39;);
+    elements.photoBtn.classList.add(&#39;hidden&#39;);
+    elements.analizingSpinner.classList.remove(&#39;hidden&#39;);
+
+    // Simular análisis facial
+    setTimeout(processAnalysis, 2500);
+};
+
+// --- 3. Procesamiento y Guardado de Datos ---
+
+const generateResults = () =&gt; {
+    const results = {
+        morfologia: {
+            simetria: &quot;Media, con ligera asimetría en el arco superciliar.&quot;,
+            volumenes: &quot;Buena densidad en pómulos, ligera pérdida en contorno mandibular.&quot;
+        },
+        textura: {
+            arrugas_finas: &quot;Leves líneas de expresión periorbitales (patas de gallo).&quot;,
+            poros: &quot;Poros dilatados en zona T, uniformidad del 85%.&quot;
+        },
+        pigmentacion: {
+            manchas: &quot;Discromías muy leves por exposición solar. Rojeces mínimas.&quot;,
+        },
+        elasticidad: {
+            flacidez: &quot;Firmeza del 92%. Buena elasticidad general.&quot;,
+        },
+        hidratacion: {
+            tipo_piel: &quot;Mixta con tendencia a la sequedad en mejillas.&quot;,
+            brillo: &quot;Brillo saludable en zona de frente, sin exceso de grasa.&quot;
+        },
+        imperfecciones: {
+            acne: &quot;Ausencia de lesiones activas. Presencia de cicatrices muy superficiales.&quot;
+        },
+        envejecimiento: {
+            proyeccion: &quot;Proyección a 5 años: aparición de surcos nasogenianos moderados sin tratamiento.&quot;
+        },
+        edad_biologica: &quot;2 años menos que la edad cronológica.&quot;,
+        impacto_emocional: &quot;Ligero impacto por cansancio, visible en ojeras leves y falta de luminosidad.&quot;
     };
 
-    const displayMetric = (elementId, label, value) => {
-        const container = document.getElementById('metrics-summary');
-        const item = document.createElement('div');
-        item.className = 'result-item';
-        item.innerHTML = `
-            <span class="result-item-label">${label}:</span>
-            <span class="font-medium text-brown">${value}</span>
-        `;
-        container.appendChild(item);
+    const serumData = {
+        descripcion: &quot;NUKLEIA SERUM CELL es un potente regenerador celular. Su componente principal, el **ADN de Salmón (Polinucleótidos)**, actúa a nivel molecular estimulando la reparación de tejidos y la producción de colágeno. Los **Exosomas** garantizan una comunicación celular óptima, transportando factores de crecimiento directamente a las células dañadas. Resultados: Regeneración, Firmeza y Luminosidad.&quot;,
+        beneficios: [
+            &quot;Mejora la elasticidad y firmeza de la piel.&quot;,
+            &quot;Promueve la regeneración celular profunda.&quot;,
+            &quot;Reduce la apariencia de líneas finas y arrugas.&quot;,
+            &quot;Aporta hidratación intensa y duradera.&quot;
+        ]
+    };
+
+    const procedures = {
+        morfologia: [&quot;HIFU (Ultrasonido Focalizado)&quot;, &quot;Facefit (Masaje Miofascial)&quot;],
+        textura: [&quot;Dermapen (Microneedling)&quot;, &quot;Peeling Químico Suave&quot;],
+        pigmentacion: [&quot;Láser Q-Switched&quot;, &quot;Fototerapia con LED&quot;],
+        hidratacion: [&quot;Mesoterapia con Ácido Hialurónico&quot;, &quot;Limpieza Facial Profunda&quot;],
+    };
+
+    let recommendedProcedures = new Set();
+    Object.values(procedures).forEach(arr =&gt; arr.forEach(item =&gt; recommendedProcedures.add(item)));
+    
+    return { results, serumData, recommendedProcedures: Array.from(recommendedProcedures) };
+};
+
+
+const saveAnalysisToFirestore = async (analysisData) =&gt; {
+    if (!db || !userId) {
+        console.error(&quot;Error de DB: Base de datos o User ID no disponible.&quot;);
+        alertMessage(&quot;Error: La conexión con la base de datos no está lista. Por favor, recarga.&quot;, &#39;error&#39;);
+        return;
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        await initFirebase(); 
+    try {
+        // Referencia a la colección &#39;analyses&#39; dentro del path del usuario actual
+        // RUTA: /artifacts/default-app-id/users/{userId}/analyses
+        const analysisCollectionRef = collection(db, &#39;artifacts&#39;, appId, &#39;users&#39;, userId, &#39;analyses&#39;);
 
-        const introSection = document.getElementById('intro-section');
-        const form = document.getElementById('user-info-form');
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
+        await addDoc(analysisCollectionRef, {
+            userId: userId,
+            name: userName,
+            email: userEmail,
+            date: new Date(),
+            results: analysisData.results,
+            serumRecommendation: analysisData.serumData,
+            proceduresRecommended: analysisData.recommendedProcedures
+        });
+
+        console.log(&quot;Análisis guardado exitosamente en Firestore.&quot;);
+    } catch (error) {
+        console.error(&quot;Error al guardar en Firestore (Revisar Reglas y Auth):&quot;, error);
+        alertMessage(&quot;Error al guardar datos. Revisa las Reglas de Seguridad de Firestore.&quot;, &#39;error&#39;);
+    }
+};
+
+
+const processAnalysis = async () =&gt; {
+    const analysisData = generateResults();
+    
+    // Guardar en Firestore
+    await saveAnalysisToFirestore(analysisData);
+
+    elements.analizingSpinner.classList.add(&#39;hidden&#39;);
+    elements.resultsSection.classList.remove(&#39;hidden&#39;);
+    elements.analysisSection.classList.add(&#39;hidden&#39;);
+
+    displayResults(analysisData);
+};
+
+const displayResults = (data) =&gt; {
+    // Mostrar la foto capturada en el contenedor de resultados
+    elements.userPhotoContainer.innerHTML = &#39;&#39;;
+    const img = document.createElement(&#39;img&#39;);
+    img.src = elements.photoCanvas.toDataURL(&#39;image/jpeg&#39;);
+    img.className = &quot;w-full h-auto rounded-lg shadow-xl mb-4&quot;;
+    elements.userPhotoContainer.appendChild(img);
+
+    const proceduresHTML = data.recommendedProcedures.map(proc =&gt; `
+        &lt;span class=&quot;inline-block bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full font-semibold&quot;&gt;
+            ${proc}
+        &lt;/span&gt;
+    `).join(&#39;&#39;);
+
+    const resultsHTML = `
+        &lt;h2 class=&quot;text-3xl font-light text-gray-800 border-b pb-2 mb-4&quot;&gt;Resultados de su Análisis NUKLEIA&lt;/h2&gt;
         
-        const analysisSection = document.getElementById('analysis-section');
-        const takePhotoBtn = document.getElementById('take-photo-btn');
-        const cameraFeed = document.getElementById('camera-feed');
-        const overlay = document.getElementById('overlay');
-        const resultsSection = document.getElementById('results-section');
-        const analyzedImage = document.getElementById('analyzed-image');
-        const contactPopup = document.getElementById('contact-popup');
-        const closePopupBtn = document.getElementById('close-popup-btn');
-        const contactDermBtn = document.getElementById('contact-derm-btn');
-        const proceduresList = document.getElementById('procedures-list');
-        const recommendationText = document.getElementById('recommendation-text');
-        const metricsSummary = document.getElementById('metrics-summary');
-        
-        let cameraStream = null;
+        &lt;!-- Resumen y Edad Biológica --&gt;
+        &lt;div class=&quot;p-4 bg-yellow-50/50 rounded-lg mb-6 shadow-inner border border-yellow-200&quot;&gt;
+            &lt;p class=&quot;text-xl font-medium text-gray-700&quot;&gt;Edad Biológica Estimada:&lt;/p&gt;
+            &lt;p class=&quot;text-4xl font-extrabold text-pink-600&quot;&gt;${data.results.edad_biologica}&lt;/p&gt;
+            &lt;p class=&quot;mt-2 text-sm text-gray-600&quot;&gt;Proyección: ${data.results.envejecimiento.proyeccion}&lt;/p&gt;
+        &lt;/div&gt;
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            userName = nameInput.value;
-            userEmail = emailInput.value;
-            
-            introSection.style.display = 'none';
-            analysisSection.style.display = 'block';
-            
-            // Iniciar cámara con permisos frontales
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-                .then(stream => {
-                    cameraStream = stream;
-                    cameraFeed.srcObject = stream;
-                    cameraFeed.play();
-                    takePhotoBtn.disabled = false;
-                })
-                .catch(err => {
-                    console.error("Error al acceder a la cámara: ", err);
-                    alert('Error al acceder a la cámara. Por favor, revisa los permisos.');
-                    takePhotoBtn.disabled = true;
-                });
-        });
-
-        takePhotoBtn.addEventListener('click', async () => {
-            if (!cameraStream) return;
-
-            const canvas = document.createElement('canvas');
-            canvas.width = cameraFeed.videoWidth;
-            canvas.height = cameraFeed.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
-
-            cameraStream.getTracks().forEach(track => track.stop());
-            cameraFeed.srcObject = null;
-
-            overlay.style.opacity = 1;
-            takePhotoBtn.disabled = true;
-            
-            setTimeout(async () => {
-                overlay.style.opacity = 0;
-                analysisSection.style.display = 'none';
-                resultsSection.style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' }); 
-
-                const imageDataURL = canvas.toDataURL('image/jpeg', 0.8);
-                analyzedImage.src = imageDataURL;
-                
-                const results = generateFakeResults();
-                displayResults(results);
-
-                // Guardar en Firestore
-                if (firebaseReady) {
-                    try {
-                        const analysisData = {
-                            userId: userId,
-                            name: userName,
-                            email: userEmail,
-                            date: new Date(),
-                            results: results
-                        };
-                        
-                        const analysesCollection = collection(db, 'artifacts', appId, 'users', userId, 'analyses');
-                        await addDoc(analysesCollection, analysisData);
-                        console.log("Datos de análisis guardados en Firestore.");
-                    } catch (e) {
-                        console.error("Error al guardar en Firestore (revisar reglas de seguridad): ", e);
-                        document.getElementById('firebase-warning').style.display = 'block';
-                    }
-                } 
-            }, 4000); // Simulación de 4 segundos de análisis
-        });
-
-        contactDermBtn.addEventListener('click', () => {
-            document.getElementById('popup-name').value = userName || '';
-            document.getElementById('popup-email').value = userEmail || '';
-            contactPopup.style.display = 'flex';
-        });
-
-        closePopupBtn.addEventListener('click', () => {
-            contactPopup.style.display = 'none';
-        });
-
-        document.getElementById('contact-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            contactPopup.style.display = 'none';
-            
-            if (firebaseReady) {
-                try {
-                    const contactData = {
-                        userId: userId,
-                        name: document.getElementById('popup-name').value,
-                        email: document.getElementById('popup-email').value,
-                        date: new Date(),
-                        type: 'Dermatologist Contact'
-                    };
-                    const contactsCollection = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
-                    await addDoc(contactsCollection, contactData);
-                    console.log("Datos de contacto guardados en Firestore.");
-                } catch (e) {
-                    console.error("Error al guardar contacto en Firestore: ", e);
+        &lt;!-- Detalle del Análisis --&gt;
+        &lt;div class=&quot;space-y-6&quot;&gt;
+            ${Object.keys(data.results).map(key =&gt; {
+                if (typeof data.results[key] === &#39;object&#39;) {
+                    return `
+                        &lt;div class=&quot;bg-white p-4 rounded-lg shadow-md border-l-4 border-salmon-400&quot;&gt;
+                            &lt;h3 class=&quot;text-lg font-semibold text-gray-700 capitalize mb-2&quot;&gt;${key.replace(&#39;_&#39;, &#39; &#39;)}&lt;/h3&gt;
+                            &lt;ul class=&quot;list-disc ml-5 text-gray-600 space-y-1 text-sm&quot;&gt;
+                                ${Object.keys(data.results[key]).map(subKey =&gt; `
+                                    &lt;li&gt;&lt;strong class=&quot;capitalize&quot;&gt;${subKey.replace(&#39;_&#39;, &#39; &#39;)}:&lt;/strong&gt; ${data.results[key][subKey]}&lt;/li&gt;
+                                `).join(&#39;&#39;)}
+                            &lt;/ul&gt;
+                        &lt;/div&gt;
+                    `;
+                } else {
+                    return `
+                        &lt;div class=&quot;bg-white p-4 rounded-lg shadow-md border-l-4 border-salmon-400&quot;&gt;
+                            &lt;h3 class=&quot;text-lg font-semibold text-gray-700 capitalize&quot;&gt;${key.replace(&#39;_&#39;, &#39; &#39;)}:&lt;/h3&gt;
+                            &lt;p class=&quot;text-gray-600 text-sm&quot;&gt;${data.results[key]}&lt;/p&gt;
+                        &lt;/div&gt;
+                    `;
                 }
-            }
-        });
+            }).join(&#39;&#39;)}
+        &lt;/div&gt;
+        
+        &lt;!-- Recomendación de Procedimientos --&gt;
+        &lt;div class=&quot;mt-8 pt-6 border-t border-gray-200&quot;&gt;
+            &lt;h3 class=&quot;text-2xl font-light text-gray-800 mb-4&quot;&gt;Recomendaciones de Procedimientos&lt;/h3&gt;
+            &lt;div class=&quot;flex flex-wrap gap-2&quot;&gt;
+                ${proceduresHTML}
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- NUKLEIA SERUM --&gt;
+        &lt;div class=&quot;mt-8 pt-6 border-t border-gray-200 bg-salmon-50/50 p-6 rounded-lg shadow-lg&quot;&gt;
+            &lt;h3 class=&quot;text-2xl font-light text-pink-700 mb-3&quot;&gt;Recomendación: NUKLEIA SERUM CELL&lt;/h3&gt;
+            &lt;p class=&quot;text-gray-600 mb-4&quot;&gt;${data.serumData.descripcion}&lt;/p&gt;
+            &lt;ul class=&quot;list-disc ml-5 text-gray-700 space-y-1 text-sm&quot;&gt;
+                ${data.serumData.beneficios.map(b =&gt; `&lt;li&gt;${b}&lt;/li&gt;`).join(&#39;&#39;)}
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    `;
+    
+    elements.resultsContainer.innerHTML = resultsHTML;
+};
+
+const alertMessage = (message, type = &#39;info&#39;) =&gt; {
+    const color = type === &#39;error&#39; ? &#39;bg-red-500&#39; : &#39;bg-blue-500&#39;;
+    const alertEl = document.createElement(&#39;div&#39;);
+    alertEl.className = `fixed bottom-5 left-1/2 transform -translate-x-1/2 p-3 ${color} text-white rounded-lg shadow-xl z-50`;
+    alertEl.textContent = message;
+    document.body.appendChild(alertEl);
+    setTimeout(() =&gt; alertEl.remove(), 4000);
+};
 
 
-        function generateFakeResults() {
-            const random = () => Math.random();
-            const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-            const mapLevel = (value) => {
-                if (value > 0.7) return 'Alta';
-                if (value > 0.4) return 'Moderada';
-                return 'Baja';
-            };
-            const results = {
-                skinAge: randomInt(26, 42),
-                fineWrinkles: random(),
-                deepWrinkles: random(),
-                texture: random(),
-                toneUniformity: random(),
-                pigmentation: random(),
-                firmness: random(),
-                hydration: random(),
-                imperfections: random(),
-                expression: random(),
-                morphology: random(),
-            };
-            
-            let recommendations = `Tu piel tiene una edad biológica de **${results.skinAge} años**. Presenta una **elasticidad ${mapLevel(results.firmness)}**, pero se observa una tendencia a **arrugas finas** y una ligera **falta de hidratación**. Por ello, el **NUKLEIA SERUM** es esencial. Sus **polinucleótidos** y **exosomas** actuarán directamente en la regeneración celular y la retención de agua, previniendo el envejecimiento y mejorando la luminosidad.`;
+// --- 4. Event Listeners ---
 
-            const procedures = [
-                { name: 'Facefit Pro', description: 'Tratamiento no invasivo para tonificar y definir el óvalo facial, estimulando el colágeno.', image: 'https://placehold.co/400x250/FFDAB9/5D4037?text=Facefit' },
-                { name: 'Mesoterapia Revitalizante', description: 'Microinyecciones de vitaminas y ácido hialurónico para hidratación profunda y luminosidad.', image: 'https://placehold.co/400x250/FFDAB9/5D4037?text=Mesoterapia' },
-                { name: 'Dermapen con Vitaminas', description: 'Técnica de micro-punciones que estimula la producción de colágeno para mejorar la textura.', image: 'https://placehold.co/400x250/FFDAB9/5D4037?text=Dermapen' },
-                { name: 'Peeling Químico Suave', description: 'Renovación de la capa superficial de la piel para tratar manchas leves y unificar el tono.', image: 'https://placehold.co/400x250/FFDAB9/5D4037?text=Peeling' },
-            ];
-            
-            const recommendedProcedures = [];
-            // Selecciona 3 procedimientos al azar
-            for (let i = 0; i < 3; i++) {
-                const randomIndex = Math.floor(Math.random() * procedures.length);
-                recommendedProcedures.push(procedures.splice(randomIndex, 1)[0]);
-            }
-            
-            return {
-                ...results,
-                recommendationText: recommendations,
-                procedures: recommendedProcedures
-            };
+document.addEventListener(&#39;DOMContentLoaded&#39;, () =&gt; {
+    // Inicializa Firebase al cargar el DOM
+    initFirebase();
+
+    // Manejo del Formulario de Datos (Primer Paso)
+    elements.dataForm.addEventListener(&#39;submit&#39;, (e) =&gt; {
+        e.preventDefault();
+        userName = elements.userNameInput.value.trim();
+        userEmail = elements.userEmailInput.value.trim();
+
+        if (userName === &quot;&quot; || userEmail === &quot;&quot;) {
+            alertMessage(&quot;Por favor, completa tu Nombre y Correo.&quot;, &#39;info&#39;);
+            return;
         }
-
-        function displayResults(results) {
-            const mapLevel = (value) => {
-                if (value > 0.7) return 'Alta';
-                if (value > 0.4) return 'Moderada';
-                return 'Baja';
-            };
-            
-            metricsSummary.innerHTML = '';
-            
-            displayMetric('skin-age', 'Edad Biológica', `${results.skinAge} años`);
-            displayMetric('fine-wrinkles', 'Arrugas Finas', mapLevel(results.fineWrinkles));
-            displayMetric('deep-wrinkles', 'Arrugas Profundas', mapLevel(results.deepWrinkles));
-            displayMetric('texture', 'Textura y Poros', results.texture > 0.6 ? 'Irregular' : 'Uniforme');
-            displayMetric('tone-uniformity', 'Uniformidad del Tono', mapLevel(results.toneUniformity));
-            displayMetric('pigmentation', 'Pigmentación (Manchas)', mapLevel(results.pigmentation));
-            displayMetric('firmness', 'Elasticidad y Firmeza', results.firmness > 0.7 ? 'Excelente' : 'Buena/Normal');
-            displayMetric('hydration', 'Hidratación y Brillo', results.hydration > 0.7 ? 'Óptima' : 'Necesita refuerzo');
-            displayMetric('imperfections', 'Lesiones/Acné', results.imperfections > 0.6 ? 'Presentes' : 'Mínimas');
-            displayMetric('expression', 'Impacto Emocional (IA)', results.expression > 0.7 ? 'Cansancio Visible' : 'Piel Radiante');
-            displayMetric('morphology', 'Simetría Facial', results.morphology > 0.7 ? 'Asimetría Leve' : 'Buena Proporción');
-            
-            recommendationText.innerHTML = results.recommendationText;
-
-            // Renderizar procedimientos
-            proceduresList.innerHTML = '';
-            results.procedures.forEach(proc => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-lg border border-[#FFDAB9] overflow-hidden procedure-card-hover';
-                card.innerHTML = `
-                    <img src="${proc.image}" alt="${proc.name}" class="w-full h-48 object-cover">
-                    <div class="p-4 md:p-6">
-                        <h4 class="text-xl font-bold text-brown mb-2">${proc.name}</h4>
-                        <p class="text-gray-600 text-sm">${proc.description}</p>
-                    </div>
-                `;
-                proceduresList.appendChild(card);
-            });
-        }
+        
+        // Si el formulario es válido, pasa a iniciar la cámara
+        elements.introSection.classList.add(&#39;hidden&#39;);
+        startCamera();
     });
+
+    // Botón para tomar la foto
+    elements.photoBtn.addEventListener(&#39;click&#39;, takePhoto);
+
+    // Botón para volver al inicio
+    elements.backBtn.addEventListener(&#39;click&#39;, () =&gt; {
+        stopCamera();
+        elements.resultsSection.classList.add(&#39;hidden&#39;);
+        elements.photoCanvas.classList.add(&#39;hidden&#39;);
+        elements.cameraFeed.classList.remove(&#39;hidden&#39;);
+        elements.photoBtn.classList.remove(&#39;hidden&#39;);
+        elements.formSection.classList.remove(&#39;hidden&#39;);
+        elements.introSection.classList.remove(&#39;hidden&#39;);
+    });
+});
+
 </script>
 
 </body>
