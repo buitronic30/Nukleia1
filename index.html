@@ -3,80 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NUKLEIA - Análisis Facial IA</title>
-<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://www.google.com/search?q=https://fonts.googleapis.com">
-<link rel="preconnect" href="https://www.google.com/search?q=https://fonts.gstatic.com" crossorigin>
-<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DPlayfair%2BDisplay:ital,wght%400,400..900%3B1,400..900%26family%3DInter:wght%40300%3B400%3B500%3B600%3B700%26display%3Dswap" rel="stylesheet">
-<link rel="stylesheet" href="https://www.google.com/search?q=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<title>NUKLEIA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-body {
-font-family: 'Inter', sans-serif;
-background-color: #FFFDF9; /* Blanco hueso muy claro /
-color: #4A4A4A;
-}
-h2, h3, h4 {
-font-family: 'Playfair Display', serif;
-}
-.text-salmon-rose {
-color: #FFB3A7; / Salmón Rosado /
-}
-.bg-salmon-light {
-background-color: #FFF0ED; / Fondo más claro que el salmón /
-}
-.text-brown {
-color: #5D4037; / Marrón para el texto principal /
-}
-.btn-primary {
-background-color: #FFDAB9; / Melocotón Pastel /
-color: #5D4037;
-padding: 0.8rem 2.5rem;
-border-radius: 9999px;
-font-weight: 600;
-border: 2px solid #5D4037;
-transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-box-shadow: 0 4px 10px rgba(93, 64, 55, 0.1);
-}
-.btn-primary:hover {
-background-color: #FFC0B3;
-transform: translateY(-2px);
-box-shadow: 0 6px 12px rgba(93, 64, 55, 0.15);
-}
-.line-divider {
-height: 1px;
-background-color: #E0E0E0;
-width: 100%;
-margin: 5rem 0;
-}
-.header-image {
-width: 100%;
-height: 70vh;
-max-height: 700px;
-object-fit: cover;
-object-position: center top;
-filter: brightness(0.95);
-}
-#video-container, #image-container {
-width: 100%;
-max-width: 500px;
-margin: 0 auto;
-aspect-ratio: 1 / 1; / Para mantener la forma cuadrada de la foto facial */
-position: relative;
-}
-.procedure-card-hover {
-transition: all 0.3s ease;
-}
-.procedure-card-hover:hover {
-transform: scale(1.02);
-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-    /* Aseguramos que solo la sección de inicio se muestre por defecto */
-    #analysis-section, #results-section, #contact-popup {
-        display: none;
-    }
-    #intro-section {
-         display: block;
-    }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  /* Definición de la paleta de colores de NUKLEIA */
+  :root {
+    --color-salmon-rosa: #fce2e8; /* Base principal, más claro */
+    --color-salmon-fuerte: #f9b6c1; /* Botones, elementos destacados */
+    --color-blanco-hueso: #fdfcfc; /* Fondo */
+    --color-dorado-pastel: #f5e4c7; /* Acentos sutiles */
+    --color-texto-principal: #333333;
+    --color-texto-suave: #666666;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-blanco-hueso);
+    color: var(--color-texto-principal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Estilo para las secciones de resultados */
+  .result-card {
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease-in-out;
+  }
+  .result-card:hover {
+    transform: translateY(-2px);
+  }
+  /* Estilo del botón primario */
+  .btn-primary {
+    background-color: var(--color-salmon-fuerte);
+    color: var(--color-texto-principal);
+    transition: background-color 0.3s, transform 0.1s;
+    font-weight: 600;
+  }
+  .btn-primary:hover {
+    background-color: #f7a0b1; /* Tono ligeramente más oscuro */
+    transform: translateY(-1px);
+  }
+  /* Ocultar secciones por defecto */
+  #analysis-section, #results-section {
+    display: none;
+  }
+  /* Estilo de la cámara */
+  #camera-feed {
+    transform: scaleX(-1); /* Reflejar la cámara horizontalmente para el modo "espejo" */
+  }
 </style>
 
 </head>
