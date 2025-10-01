@@ -284,6 +284,21 @@ const initFirebase = async () =&gt; {
     } catch (error) {
         console.error(&quot;Error al inicializar Firebase:&quot;, error);
         elements.firebaseWarning.classList.remove(&#39;hidden&#39;);
+      const handleFormSubmit = async (e) => {
+    e.preventDefault(); // 
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!name || !email) {
+        showMessage('Por favor, ingresa tu nombre y email.', 'bg-red-500');
+        return;
+    }
+    userName = name;
+    userEmail = email;
+    // Ocultar la sección de intro y mostrar la de análisis
+    document.getElementById('intro-section').style.display = 'none';
+    document.getElementById('analysis-section').style.display = 'block';
+    // Iniciar el flujo de la cámara
+    startCamera();
     }
 };
 
