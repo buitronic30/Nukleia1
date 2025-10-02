@@ -284,8 +284,10 @@ const initFirebase = async () =&gt; {
     } catch (error) {
         console.error(&quot;Error al inicializar Firebase:&quot;, error);
         elements.firebaseWarning.classList.remove(&#39;hidden&#39;);
-      const handleFormSubmit = async (e) => {
-    e.preventDefault(); // 
+   // Maneja el envío del formulario inicial (Nombre y Email)
+// Se encuentra en la sección del <script type="module">
+const handleFormSubmit = async (e) => {
+    e.preventDefault(); 
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     if (!name || !email) {
@@ -296,10 +298,9 @@ const initFirebase = async () =&gt; {
     userEmail = email;
     // Ocultar la sección de intro y mostrar la de análisis
     document.getElementById('intro-section').style.display = 'none';
-    document.getElementById('analysis-section').style.display = 'block';
+    document.getElementById('analysis-section').style.display = 'block';----
     // Iniciar el flujo de la cámara
     startCamera();
-    }
 };
 
 // --- 2. Funciones de Navegación y Cámara ---
