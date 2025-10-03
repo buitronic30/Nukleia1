@@ -286,8 +286,7 @@ const initFirebase = async () =&gt; {
         elements.firebaseWarning.classList.remove(&#39;hidden&#39;);
 // Maneja el envío del formulario inicial (Nombre y Email)
 const handleFormSubmit = async (e) => {
-    e.preventDefault(); // <-- Ahora sí está en el lugar correcto (con ;)
-    
+    e.preventDefault();  
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
 
