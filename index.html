@@ -1,123 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NUKLEIA</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-  /* Definición de la paleta de colores de NUKLEIA */
-  :root {
-    --color-salmon-rosa: #fce2e8; /* Base principal, más claro */
-    --color-salmon-fuerte: #f9b6c1; /* Botones, elementos destacados */
-    --color-blanco-hueso: #fdfcfc; /* Fondo */
-    --color-dorado-pastel: #f5e4c7; /* Acentos sutiles */
-    --color-texto-principal: #333333;
-    --color-texto-suave: #666666;
-  }
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--color-blanco-hueso);
-    color: var(--color-texto-principal);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  /* Estilo para las secciones de resultados */
-  .result-card {
-    background-color: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s ease-in-out;
-  }
-  .result-card:hover {
-    transform: translateY(-2px);
-  }
-  /* Estilo del botón primario */
-  .btn-primary {
-    background-color: var(--color-salmon-fuerte);
-    color: var(--color-texto-principal);
-    transition: background-color 0.3s, transform 0.1s;
-    font-weight: 600;
-  }
-  .btn-primary:hover {
-    background-color: #f7a0b1; /* Tono ligeramente más oscuro */
-    transform: translateY(-1px);
-  }
-  /* Ocultar secciones por defecto */
-  #analysis-section, #results-section {
-    display: none;
-  }
-  /* Estilo de la cámara */
-  #camera-feed {
-    transform: scaleX(-1); /* Reflejar la cámara horizontalmente para el modo "espejo" */
-  }
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUKLEIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+      /* Definición de la paleta de colores de NUKLEIA */
+      :root {
+        --color-salmon-rosa: #fce2e8; /* Base principal, más claro */
+        --color-salmon-fuerte: #f9b6c1; /* Botones, elementos destacados */
+        --color-blanco-hueso: #fdfcfc; /* Fondo */
+        --color-dorado-pastel: #f5e4c7; /* Acentos sutiles */
+        --color-texto-principal: #333333;
+        --color-texto-suave: #666666;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--color-blanco-hueso);
+        color: var(--color-texto-principal);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      /* Estilo para las secciones de resultados */
+      .result-card {
+        background-color: white;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease-in-out;
+      }
+      .result-card:hover {
+        transform: translateY(-2px);
+      }
+      /* Estilo del botón primario */
+      .btn-primary {
+        background-color: var(--color-salmon-fuerte);
+        color: var(--color-texto-principal);
+        padding: 0.75rem 1.5rem; /* Padding añadido para consistencia */
+        border-radius: 9999px; /* Botones redondeados */
+        transition: background-color 0.3s, transform 0.1s;
+        font-weight: 600;
+      }
+      .btn-primary:hover {
+        background-color: #f7a0b1; /* Tono ligeramente más oscuro */
+        transform: translateY(-1px);
+      }
+      /* Ocultar secciones por defecto */
+      #analysis-section, #results-section {
+        display: none;
+      }
+      /* Estilo del contenedor de la cámara y el overlay */
+      #video-container {
+          position: relative;
+          background-color: #000;
+          border-radius: 0.75rem;
+          overflow: hidden;
+      }
+      #camera-feed {
+        transform: scaleX(-1); /* Reflejar la cámara horizontalmente para el modo "espejo" */
+      }
+      #photo-canvas {
+          display: none; /* Oculto por defecto */
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        display: none; /* Oculto por defecto, se muestra con JS */
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+      }
+    </style>
 </head>
+
 <body class="antialiased">
-<!-- Sección de la imagen principal -->
 <header>
-    <img src="https://placehold.co/1200x800/FFF0ED/5D4037?text=NUKLEIA" alt="Rostro de mujer con efecto suave" class="header-image">
+    <img src="https://placehold.co/1200x800/fce2e8/333333?text=NUKLEIA" alt="Banner principal de Nukleia" class="w-full">
 </header>
 
-<!-- Contenedor principal -->
 <main class="container mx-auto p-4 md:p-12">
 
-    <!-- 1. Sección de Introducción y Formulario (Visible por defecto) -->
     <section id="intro-section" class="py-12">
-        <h2 class="text-4xl md:text-6xl font-light text-brown leading-tight text-center">
+        <h2 class="text-4xl md:text-6xl font-light text-center">
             DESCUBRE LO QUE TU PIEL NECESITA
         </h2>
         <p class="mt-4 text-gray-600 text-xl text-center">
             Análisis facial con **Inteligencia Artificial** en 30 segundos. Precisión clínica para tu rutina.
         </p>
         
-        <!-- Paso a Paso con Imágenes Responsive -->
-        <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center max-w-5xl mx-auto">
-            <div class="flex flex-col items-center p-6 rounded-xl bg-salmon-light shadow-md procedure-card-hover">
-                <img src="https://placehold.co/100x100/FFDAB9/5D4037?text=1" alt="Paso 1" class="w-20 h-20 mb-3 rounded-full">
-                <p class="font-semibold text-brown">1. Prepara tu Piel</p>
-                <p class="text-sm mt-1 text-gray-600">Asegúrate de una buena iluminación y rostro despejado.</p>
-            </div>
-            <div class="flex flex-col items-center p-6 rounded-xl bg-salmon-light shadow-md procedure-card-hover">
-                <img src="https://placehold.co/100x100/FFDAB9/5D4037?text=2" alt="Paso 2" class="w-20 h-20 mb-3 rounded-full">
-                <p class="font-semibold text-brown">2. Captura con la IA</p>
-                <p class="text-sm mt-1 text-gray-600">Sube una foto o usa la cámara para el escaneo en vivo.</p>
-            </div>
-            <div class="flex flex-col items-center p-6 rounded-xl bg-salmon-light shadow-md procedure-card-hover">
-                <img src="https://placehold.co/100x100/FFDAB9/5D4037?text=3" alt="Paso 3" class="w-20 h-20 mb-3 rounded-full">
-                <p class="font-semibold text-brown">3. Recibe tu Plan</p>
-                <p class="text-sm mt-1 text-gray-600">Obtén un informe con métricas y recomendaciones personalizadas.</p>
-            </div>
-        </div>
-        
         <form id="user-info-form" class="mt-16 flex flex-col items-center">
             <p id="firebase-warning" class="text-red-600 text-center mb-4 font-semibold hidden p-3 border-2 border-red-200 bg-red-50 rounded-lg w-full max-w-md">
                 ⚠ La base de datos no está conectada. Los datos no se guardarán. Por favor, revisa la configuración de Firebase.
             </p>
-            <h4 class="text-2xl font-light text-brown mb-6">Comienza tu Análisis Gratuito</h4>
+            <h4 class="text-2xl font-light mb-6">Comienza tu Análisis Gratuito</h4>
             <div class="mb-4 w-full max-w-sm">
                 <label for="name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
-                <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFDAB9]">
+                <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f9b6c1]">
             </div>
             <div class="mb-6 w-full max-w-sm">
                 <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
-                <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFDAB9]">
+                <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f9b6c1]">
             </div>
             <button type="submit" class="mt-4 btn-primary w-full max-w-xs">HACER MI ESCANEO GRATUITO</button>
         </form>
     </section>
 
-    <!-- Divisor -->
-    <div class="line-divider"></div>
-
-    <!-- 2. Sección de Cámara y Análisis (Oculta por defecto) -->
     <section id="analysis-section" class="w-full max-w-4xl mx-auto text-center mb-12">
-        <h2 class="text-3xl font-bold mb-8 text-brown">Paso 2: Captura Facial</h2>
+        <h2 class="text-3xl font-bold mb-8">Paso 2: Captura Facial</h2>
         
         <div id="video-container" class="mb-6 shadow-2xl">
-            <video id="camera-feed" class="rounded-xl" autoplay playsinline></video>
+            <video id="camera-feed" class="rounded-xl w-full" autoplay playsinline></video>
+            <canvas id="photo-canvas"></canvas> 
             <div class="overlay" id="overlay">
                 <i class="fas fa-spinner fa-spin text-4xl mb-2"></i>
                 <p>Analizando...</p>
@@ -126,51 +132,43 @@
         
         <p id="error-message" class="text-red-500 mt-4 font-medium hidden"></p>
         <button id="take-photo-btn" class="btn-primary mt-6 disabled:opacity-50 disabled:cursor-not-allowed">
-            Tomar Foto para Analizar
+            <i class="fas fa-camera mr-2"></i>Tomar Foto para Analizar
         </button>
     </section>
 
-    <!-- 3. Sección de Resultados (Oculta por defecto) -->
     <section id="results-section" class="w-full max-w-6xl mx-auto mb-12 p-4 md:p-0">
-        <h2 class="text-4xl font-bold mb-8 text-center text-brown">Tus Resultados de Análisis Personalizado</h2>
+        <h2 class="text-4xl font-bold mb-8 text-center">Tus Resultados de Análisis Personalizado</h2>
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-salmon-light p-6 md:p-10 rounded-xl shadow-xl">
-            <!-- Columna de Imagen y Proyección -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-[#fce2e8] p-6 md:p-10 rounded-xl shadow-xl">
             <div class="flex flex-col">
                 <div id="image-container" class="shadow-xl">
                     <img id="analyzed-image" class="rounded-xl w-full h-auto mb-4" src="" alt="Foto analizada">
                 </div>
-                <div id="future-projection" class="mt-6 p-4 rounded-lg text-left border-2 border-[#FFDAB9] bg-white shadow-inner">
+                <div id="future-projection" class="mt-6 p-4 rounded-lg text-left border-2 border-[#f9b6c1] bg-white shadow-inner">
                     <h4 class="font-bold text-xl mb-2 text-red-500 flex items-center">
                         <i class="fas fa-chart-line mr-2"></i> Envejecimiento Proyectado
                     </h4>
-                    <p class="text-gray-600 text-base">
-                        El análisis proyecta que, sin un tratamiento específico, la piel podría desarrollar mayor flacidez y arrugas profundas en los próximos 5-10 años.
-                    </p>
+                    <p id="projection-text" class="text-gray-600 text-base">
+                        </p>
                 </div>
             </div>
 
-            <!-- Columna de Métricas y Recomendaciones -->
             <div class="pt-2">
-                <h3 class="text-3xl font-semibold mb-6 text-brown border-b pb-2 border-gray-300">Diagnóstico de la Piel</h3>
-                <div id="metrics-summary" class="space-y-1">
-                    <!-- Los resultados dinámicos se insertan aquí -->
-                </div>
+                <h3 class="text-3xl font-semibold mb-6 border-b pb-2 border-gray-300">Diagnóstico de la Piel</h3>
+                <div id="metrics-summary" class="space-y-4">
+                    </div>
 
-                <h4 class="text-2xl font-semibold mt-8 mb-4 text-brown">Recomendación NUKLEIA SERUM</h4>
-                <p id="recommendation-text" class="text-gray-700 text-base p-3 border-l-4 border-salmon-rose bg-white shadow-sm"></p>
+                <h4 class="text-2xl font-semibold mt-8 mb-4">Recomendación NUKLEIA SERUM</h4>
+                <p id="recommendation-text" class="text-gray-700 text-base p-4 border-l-4 border-[#f9b6c1] bg-white shadow-sm"></p>
             </div>
         </div>
         
-        <!-- Procedimientos Recomendados -->
         <div class="mt-12">
-            <h4 class="text-3xl font-bold mb-8 text-center text-brown">Tu Plan de Procedimientos Sugeridos</h4>
+            <h4 class="text-3xl font-bold mb-8 text-center">Tu Plan de Procedimientos Sugeridos</h4>
             <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Procedimientos dinámicos aquí -->
-            </div>
+                </div>
         </div>
 
-        <!-- Botones de Contacto -->
         <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 mt-12">
             <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary text-center w-full md:w-auto">
                 <i class="fab fa-whatsapp mr-2"></i> Solicitar turno (MB Estética)
@@ -178,16 +176,12 @@
             <button id="contact-derm-btn" class="btn-primary text-center w-full md:w-auto">
                 <i class="fas fa-user-md mr-2"></i> Contactar a un Médico Dermatólogo
             </button>
-            <button id="buy-serum-btn" class="btn-primary text-center w-full md:w-auto">
-                <i class="fas fa-shopping-cart mr-2"></i> Comprar NUKLEIA Serum
-            </button>
         </div>
     </section>
     
-    <!-- Pop-up de Contacto (Oculto por defecto) -->
     <div id="contact-popup" class="hidden fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-center p-4 z-50">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300">
-            <h3 class="text-2xl font-bold mb-4 text-brown">Contactar a un Dermatólogo</h3>
+            <h3 class="text-2xl font-bold mb-4">Contactar a un Dermatólogo</h3>
             <p class="text-gray-600 mb-6">Completa el formulario y nos contactaremos para coordinar una consulta con un especialista.</p>
             <form id="contact-form">
                 <div class="mb-4">
@@ -205,382 +199,212 @@
             </form>
         </div>
     </div>
-
-    <!-- Divisor -->
-    <div class="line-divider"></div>
-
-    <!-- Sección "¿SOS PROFESIONAL?" -->
-    <section class="py-12 text-center">
-        <h3 class="text-4xl md:text-5xl font-light text-brown mb-4">¿SOS PROFESIONAL?</h3>
-        <p class="text-gray-600 mb-8 text-xl">
-            ¿Querés ofrecer la tecnología NUKLEIA en tu clínica o gabinete?
-        </p>
-        <a href="https://wa.me/5491126572893" target="_blank" class="btn-primary text-center">
-            <i class="fas fa-handshake mr-2"></i> CONTÁCTANOS
-        </a>
-    </section>
 </main>
 
 <script type="module">
-const __firebase_config = '{"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"}';
-const __initial_auth_token = '';
-const __app_id = '';
-// Firebase Imports
-import { initializeApp } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js&quot;;
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js&quot;;
-import { getFirestore, doc, setDoc, collection, query, where, addDoc } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js&quot;;
-import { setLogLevel } from &quot;https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js&quot;;
+    // Firebase Imports (con comillas corregidas)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-setLogLevel(&#39;error&#39;); // Usar &#39;error&#39; para no saturar la consola.
+    // --- CONFIGURACIÓN Y VARIABLES GLOBALES ---
+    const firebaseConfig = {"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"};
+    let app, db, auth, userId = null, userName = '', userEmail = '';
+    let videoStream = null;
 
-let app, db, auth, userId = null, userName = &#39;&#39;, userEmail = &#39;&#39;;
+    setLogLevel('error'); // Usar 'error' para no saturar la consola.
 
-// Configuración y variables por defecto
-const firebaseConfig = JSON.parse(__firebase_config);
-const appId = typeof __app_id !== &#39;undefined&#39; ? __app_id : &#39;default-app-id&#39;;
+    // --- SELECCIÓN DE ELEMENTOS DEL DOM (CORREGIDO) ---
+    const elements = {
+        introSection: document.getElementById('intro-section'),
+        analysisSection: document.getElementById('analysis-section'),
+        resultsSection: document.getElementById('results-section'),
+        cameraFeed: document.getElementById('camera-feed'),
+        photoCanvas: document.getElementById('photo-canvas'),
+        takePhotoBtn: document.getElementById('take-photo-btn'),
+        overlaySpinner: document.getElementById('overlay'),
+        metricsSummary: document.getElementById('metrics-summary'),
+        projectionText: document.getElementById('projection-text'),
+        analyzedImage: document.getElementById('analyzed-image'),
+        recommendationText: document.getElementById('recommendation-text'),
+        proceduresList: document.getElementById('procedures-list'),
+        userNameInput: document.getElementById('name'),
+        userEmailInput: document.getElementById('email'),
+        userInfoForm: document.getElementById('user-info-form'),
+        firebaseWarning: document.getElementById('firebase-warning'),
+        contactPopup: document.getElementById('contact-popup'),
+        closePopupBtn: document.getElementById('close-popup-btn'),
+        contactDermBtn: document.getElementById('contact-derm-btn'),
+        contactForm: document.getElementById('contact-form'),
+        errorMessage: document.getElementById('error-message')
+    };
 
-const elements = {
-    scanBtn: document.getElementById(&#39;scan-btn&#39;),
-    introSection: document.getElementById(&#39;intro-section&#39;),
-    formSection: document.getElementById(&#39;form-section&#39;),
-    analysisSection: document.getElementById(&#39;analysis-section&#39;),
-    resultsSection: document.getElementById(&#39;results-section&#39;),
-    cameraFeed: document.getElementById(&#39;camera-feed&#39;),
-    photoCanvas: document.getElementById(&#39;photo-canvas&#39;),
-    photoBtn: document.getElementById(&#39;photo-btn&#39;),
-    backBtn: document.getElementById(&#39;back-btn&#39;),
-    analizingSpinner: document.getElementById(&#39;analizing-spinner&#39;),
-    resultsContainer: document.getElementById(&#39;results-container&#39;),
-    userPhotoContainer: document.getElementById(&#39;user-photo-container&#39;),
-    userNameInput: document.getElementById(&#39;user-name&#39;),
-    userEmailInput: document.getElementById(&#39;user-email&#39;),
-    dataForm: document.getElementById(&#39;data-form&#39;),
-    firebaseWarning: document.getElementById(&#39;firebase-warning&#39;)
-};
+    // --- 1. INICIALIZACIÓN DE FIREBASE ---
+    const initFirebase = async () => {
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("Firebase conectado. User ID:", userId);
+                    elements.firebaseWarning.classList.add('hidden');
+                } else {
+                    await signInAnonymously(auth);
+                }
+            });
+        } catch (error) {
+            console.error("Error al inicializar Firebase:", error);
+            elements.firebaseWarning.classList.remove('hidden');
+        }
+    };
 
-let videoStream = null;
-let cameraContext = elements.photoCanvas.getContext(&#39;2d&#39;);
+    // --- 2. FUNCIONES DE NAVEGACIÓN Y CÁMARA ---
+    const startCamera = async () => {
+        elements.introSection.style.display = 'none';
+        elements.analysisSection.style.display = 'block';
 
-// --- 1. Inicialización de Firebase y Autenticación ---
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            elements.cameraFeed.srcObject = videoStream;
+        } catch (err) {
+            elements.errorMessage.textContent = 'Error al acceder a la cámara. Asegúrate de tener permisos y estar en un sitio seguro (HTTPS).';
+            elements.errorMessage.classList.remove('hidden');
+            console.error("Error al acceder a la cámara:", err);
+        }
+    };
 
-const initFirebase = async () =&gt; {
-    try {
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
+    const stopCamera = () => {
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            videoStream = null;
+        }
+    };
 
-        // Listener de autenticación
-        onAuthStateChanged(auth, async (user) =&gt; {
-            if (user) {
-                userId = user.uid;
-                console.log(&quot;Firebase conectado. User ID:&quot;, userId);
-                elements.firebaseWarning.classList.add(&#39;hidden&#39;);
+    const takePhoto = () => {
+        elements.takePhotoBtn.disabled = true;
+        elements.overlaySpinner.style.display = 'flex'; // Mostrar spinner
+
+        const context = elements.photoCanvas.getContext('2d');
+        elements.photoCanvas.width = elements.cameraFeed.videoWidth;
+        elements.photoCanvas.height = elements.cameraFeed.videoHeight;
+        
+        context.save();
+        context.translate(elements.photoCanvas.width, 0); // Mover el origen
+        context.scale(-1, 1); // Reflejar horizontalmente
+        context.drawImage(elements.cameraFeed, 0, 0, elements.photoCanvas.width, elements.photoCanvas.height);
+        context.restore(); // Restaurar el contexto para que el texto no se dibuje al revés
+        
+        stopCamera();
+        setTimeout(processAnalysis, 2500); // Simular tiempo de análisis
+    };
+
+    // --- 3. PROCESAMIENTO Y GUARDADO DE DATOS ---
+    const processAnalysis = async () => {
+        const analysisData = generateResults(); // Simular resultados
+        await saveAnalysisToFirestore(analysisData);
+
+        displayResults(analysisData);
+        
+        elements.analysisSection.style.display = 'none';
+        elements.resultsSection.style.display = 'block';
+    };
+
+    const displayResults = (data) => {
+        elements.analyzedImage.src = elements.photoCanvas.toDataURL('image/jpeg');
+        elements.projectionText.textContent = data.results.envejecimiento.proyeccion;
+        
+        elements.metricsSummary.innerHTML = Object.entries(data.results.textura)
+            .map(([key, value]) => `
+                <div class="result-card p-3">
+                    <p class="font-semibold capitalize">${key.replace('_', ' ')}</p>
+                    <p class="text-gray-600">${value}</p>
+                </div>
+            `).join('');
+
+        elements.recommendationText.textContent = data.serumData.descripcion;
+        
+        elements.proceduresList.innerHTML = data.recommendedProcedures.map(proc => `
+            <div class="result-card p-4 rounded-lg text-center">
+                <h5 class="font-bold">${proc}</h5>
+            </div>
+        `).join('');
+    };
+
+    const saveAnalysisToFirestore = async (analysisData) => {
+        if (!db || !userId) {
+            console.error("Conexión a Firestore no disponible.");
+            return;
+        }
+        try {
+            await addDoc(collection(db, 'analyses'), {
+                userId,
+                name: userName,
+                email: userEmail,
+                date: new Date(),
+                results: analysisData.results,
+                serumRecommendation: analysisData.serumData,
+                proceduresRecommended: analysisData.recommendedProcedures
+            });
+            console.log("Análisis guardado en Firestore.");
+        } catch (error) {
+            console.error("Error al guardar en Firestore:", error);
+        }
+    };
+
+    // --- 4. MANEJADORES DE EVENTOS (EVENT LISTENERS) ---
+    document.addEventListener('DOMContentLoaded', () => {
+        initFirebase();
+
+        elements.userInfoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            userName = elements.userNameInput.value.trim();
+            userEmail = elements.userEmailInput.value.trim();
+            if (userName && userEmail) {
+                startCamera();
             } else {
-                console.log(&quot;Iniciando sesión anónima...&quot;);
-                await signInAnonymously(auth);
+                alert('Por favor, completa tu nombre y email.');
             }
         });
 
-    } catch (error) {
-        console.error(&quot;Error al inicializar Firebase:&quot;, error);
-        elements.firebaseWarning.classList.remove(&#39;hidden&#39;);
-// Maneja el envío del formulario inicial (Nombre y Email)
-const handleFormSubmit = async (e) => {
-    e.preventDefault(); // Detiene la recarga del formulario
-    
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-
-    if (!name || !email) {
-        showMessage('Por favor, ingresa tu nombre y email.', 'bg-red-500');
-        return;
-    }
-
-    userName = name;
-    userEmail = email;
-
-    // Ocultar la sección de intro y mostrar la de análisis
-    document.getElementById('intro-section').style.display = 'none';
-    document.getElementById('analysis-section').style.display = 'block';
-
-    // Iniciar el flujo de la cámara
-    startCamera();
-};
-      
-// --- 2. Funciones de Navegación y Cámara ---
-
-const startCamera = async () =&gt; {
-    elements.formSection.classList.add(&#39;hidden&#39;);
-    elements.analysisSection.classList.remove(&#39;hidden&#39;);
-
-    // Configurar el canvas para ser responsive
-    const updateCanvasSize = () =&gt; {
-        const width = elements.cameraFeed.clientWidth;
-        elements.cameraFeed.width = width;
-        elements.cameraFeed.height = width * (3 / 4); // Aspecto 4:3
-        elements.photoCanvas.width = width;
-        elements.photoCanvas.height = width * (3 / 4);
-    };
-    updateCanvasSize();
-    window.addEventListener(&#39;resize&#39;, updateCanvasSize);
-
-
-    try {
-        videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: &quot;user&quot; } });
-        elements.cameraFeed.srcObject = videoStream;
-        elements.cameraFeed.play();
-    } catch (err) {
-        alertMessage(&#39;Error al acceder a la cámara. Asegúrate de tener permisos y estar en un protocolo seguro (HTTPS).&#39;, &#39;error&#39;);
-        console.error(&quot;Error al acceder a la cámara:&quot;, err);
-        elements.analysisSection.classList.add(&#39;hidden&#39;);
-        elements.formSection.classList.remove(&#39;hidden&#39;);
-    }
-};
-
-const stopCamera = () =&gt; {
-    if (videoStream) {
-        videoStream.getTracks().forEach(track =&gt; track.stop());
-        videoStream = null;
-    }
-};
-
-const takePhoto = () =&gt; {
-    const width = elements.cameraFeed.videoWidth;
-    const height = elements.cameraFeed.videoHeight;
-
-    // Establecer el canvas con el tamaño real del video para mejor resolución.
-    elements.photoCanvas.width = width;
-    elements.photoCanvas.height = height;
-
-    // Dibujar el fotograma actual en el canvas
-    cameraContext.drawImage(elements.cameraFeed, 0, 0, width, height);
-    stopCamera();
-
-    elements.cameraFeed.classList.add(&#39;hidden&#39;);
-    elements.photoCanvas.classList.remove(&#39;hidden&#39;);
-    elements.photoBtn.classList.add(&#39;hidden&#39;);
-    elements.analizingSpinner.classList.remove(&#39;hidden&#39;);
-
-    // Simular análisis facial
-    setTimeout(processAnalysis, 2500);
-};
-
-// --- 3. Procesamiento y Guardado de Datos ---
-
-const generateResults = () =&gt; {
-    const results = {
-        morfologia: {
-            simetria: &quot;Media, con ligera asimetría en el arco superciliar.&quot;,
-            volumenes: &quot;Buena densidad en pómulos, ligera pérdida en contorno mandibular.&quot;
-        },
-        textura: {
-            arrugas_finas: &quot;Leves líneas de expresión periorbitales (patas de gallo).&quot;,
-            poros: &quot;Poros dilatados en zona T, uniformidad del 85%.&quot;
-        },
-        pigmentacion: {
-            manchas: &quot;Discromías muy leves por exposición solar. Rojeces mínimas.&quot;,
-        },
-        elasticidad: {
-            flacidez: &quot;Firmeza del 92%. Buena elasticidad general.&quot;,
-        },
-        hidratacion: {
-            tipo_piel: &quot;Mixta con tendencia a la sequedad en mejillas.&quot;,
-            brillo: &quot;Brillo saludable en zona de frente, sin exceso de grasa.&quot;
-        },
-        imperfecciones: {
-            acne: &quot;Ausencia de lesiones activas. Presencia de cicatrices muy superficiales.&quot;
-        },
-        envejecimiento: {
-            proyeccion: &quot;Proyección a 5 años: aparición de surcos nasogenianos moderados sin tratamiento.&quot;
-        },
-        edad_biologica: &quot;2 años menos que la edad cronológica.&quot;,
-        impacto_emocional: &quot;Ligero impacto por cansancio, visible en ojeras leves y falta de luminosidad.&quot;
-    };
-
-    const serumData = {
-        descripcion: &quot;NUKLEIA SERUM CELL es un potente regenerador celular. Su componente principal, el **ADN de Salmón (Polinucleótidos)**, actúa a nivel molecular estimulando la reparación de tejidos y la producción de colágeno. Los **Exosomas** garantizan una comunicación celular óptima, transportando factores de crecimiento directamente a las células dañadas. Resultados: Regeneración, Firmeza y Luminosidad.&quot;,
-        beneficios: [
-            &quot;Mejora la elasticidad y firmeza de la piel.&quot;,
-            &quot;Promueve la regeneración celular profunda.&quot;,
-            &quot;Reduce la apariencia de líneas finas y arrugas.&quot;,
-            &quot;Aporta hidratación intensa y duradera.&quot;
-        ]
-    };
-
-    const procedures = {
-        morfologia: [&quot;HIFU (Ultrasonido Focalizado)&quot;, &quot;Facefit (Masaje Miofascial)&quot;],
-        textura: [&quot;Dermapen (Microneedling)&quot;, &quot;Peeling Químico Suave&quot;],
-        pigmentacion: [&quot;Láser Q-Switched&quot;, &quot;Fototerapia con LED&quot;],
-        hidratacion: [&quot;Mesoterapia con Ácido Hialurónico&quot;, &quot;Limpieza Facial Profunda&quot;],
-    };
-
-    let recommendedProcedures = new Set();
-    Object.values(procedures).forEach(arr =&gt; arr.forEach(item =&gt; recommendedProcedures.add(item)));
-    
-    return { results, serumData, recommendedProcedures: Array.from(recommendedProcedures) };
-};
-
-
-const saveAnalysisToFirestore = async (analysisData) =&gt; {
-    if (!db || !userId) {
-        console.error(&quot;Error de DB: Base de datos o User ID no disponible.&quot;);
-        alertMessage(&quot;Error: La conexión con la base de datos no está lista. Por favor, recarga.&quot;, &#39;error&#39;);
-        return;
-    }
-
-    try {
-        // Referencia a la colección &#39;analyses&#39; dentro del path del usuario actual
-        // RUTA: /artifacts/default-app-id/users/{userId}/analyses
-        const analysisCollectionRef = collection(db, &#39;artifacts&#39;, appId, &#39;users&#39;, userId, &#39;analyses&#39;);
-
-        await addDoc(analysisCollectionRef, {
-            userId: userId,
-            name: userName,
-            email: userEmail,
-            date: new Date(),
-            results: analysisData.results,
-            serumRecommendation: analysisData.serumData,
-            proceduresRecommended: analysisData.recommendedProcedures
+        elements.takePhotoBtn.addEventListener('click', takePhoto);
+        
+        elements.contactDermBtn.addEventListener('click', () => {
+            elements.contactPopup.classList.remove('hidden');
         });
 
-        console.log(&quot;Análisis guardado exitosamente en Firestore.&quot;);
-    } catch (error) {
-        console.error(&quot;Error al guardar en Firestore (Revisar Reglas y Auth):&quot;, error);
-        alertMessage(&quot;Error al guardar datos. Revisa las Reglas de Seguridad de Firestore.&quot;, &#39;error&#39;);
-    }
-};
-
-
-const processAnalysis = async () =&gt; {
-    const analysisData = generateResults();
-    
-    // Guardar en Firestore
-    await saveAnalysisToFirestore(analysisData);
-
-    elements.analizingSpinner.classList.add(&#39;hidden&#39;);
-    elements.resultsSection.classList.remove(&#39;hidden&#39;);
-    elements.analysisSection.classList.add(&#39;hidden&#39;);
-
-    displayResults(analysisData);
-};
-
-const displayResults = (data) =&gt; {
-    // Mostrar la foto capturada en el contenedor de resultados
-    elements.userPhotoContainer.innerHTML = &#39;&#39;;
-    const img = document.createElement(&#39;img&#39;);
-    img.src = elements.photoCanvas.toDataURL(&#39;image/jpeg&#39;);
-    img.className = &quot;w-full h-auto rounded-lg shadow-xl mb-4&quot;;
-    elements.userPhotoContainer.appendChild(img);
-
-    const proceduresHTML = data.recommendedProcedures.map(proc =&gt; `
-        &lt;span class=&quot;inline-block bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full font-semibold&quot;&gt;
-            ${proc}
-        &lt;/span&gt;
-    `).join(&#39;&#39;);
-
-    const resultsHTML = `
-        &lt;h2 class=&quot;text-3xl font-light text-gray-800 border-b pb-2 mb-4&quot;&gt;Resultados de su Análisis NUKLEIA&lt;/h2&gt;
+        elements.closePopupBtn.addEventListener('click', () => {
+            elements.contactPopup.classList.add('hidden');
+        });
         
-        &lt;!-- Resumen y Edad Biológica --&gt;
-        &lt;div class=&quot;p-4 bg-yellow-50/50 rounded-lg mb-6 shadow-inner border border-yellow-200&quot;&gt;
-            &lt;p class=&quot;text-xl font-medium text-gray-700&quot;&gt;Edad Biológica Estimada:&lt;/p&gt;
-            &lt;p class=&quot;text-4xl font-extrabold text-pink-600&quot;&gt;${data.results.edad_biologica}&lt;/p&gt;
-            &lt;p class=&quot;mt-2 text-sm text-gray-600&quot;&gt;Proyección: ${data.results.envejecimiento.proyeccion}&lt;/p&gt;
-        &lt;/div&gt;
-
-        &lt;!-- Detalle del Análisis --&gt;
-        &lt;div class=&quot;space-y-6&quot;&gt;
-            ${Object.keys(data.results).map(key =&gt; {
-                if (typeof data.results[key] === &#39;object&#39;) {
-                    return `
-                        &lt;div class=&quot;bg-white p-4 rounded-lg shadow-md border-l-4 border-salmon-400&quot;&gt;
-                            &lt;h3 class=&quot;text-lg font-semibold text-gray-700 capitalize mb-2&quot;&gt;${key.replace(&#39;_&#39;, &#39; &#39;)}&lt;/h3&gt;
-                            &lt;ul class=&quot;list-disc ml-5 text-gray-600 space-y-1 text-sm&quot;&gt;
-                                ${Object.keys(data.results[key]).map(subKey =&gt; `
-                                    &lt;li&gt;&lt;strong class=&quot;capitalize&quot;&gt;${subKey.replace(&#39;_&#39;, &#39; &#39;)}:&lt;/strong&gt; ${data.results[key][subKey]}&lt;/li&gt;
-                                `).join(&#39;&#39;)}
-                            &lt;/ul&gt;
-                        &lt;/div&gt;
-                    `;
-                } else {
-                    return `
-                        &lt;div class=&quot;bg-white p-4 rounded-lg shadow-md border-l-4 border-salmon-400&quot;&gt;
-                            &lt;h3 class=&quot;text-lg font-semibold text-gray-700 capitalize&quot;&gt;${key.replace(&#39;_&#39;, &#39; &#39;)}:&lt;/h3&gt;
-                            &lt;p class=&quot;text-gray-600 text-sm&quot;&gt;${data.results[key]}&lt;/p&gt;
-                        &lt;/div&gt;
-                    `;
-                }
-            }).join(&#39;&#39;)}
-        &lt;/div&gt;
-        
-        &lt;!-- Recomendación de Procedimientos --&gt;
-        &lt;div class=&quot;mt-8 pt-6 border-t border-gray-200&quot;&gt;
-            &lt;h3 class=&quot;text-2xl font-light text-gray-800 mb-4&quot;&gt;Recomendaciones de Procedimientos&lt;/h3&gt;
-            &lt;div class=&quot;flex flex-wrap gap-2&quot;&gt;
-                ${proceduresHTML}
-            &lt;/div&gt;
-        &lt;/div&gt;
-
-        &lt;!-- NUKLEIA SERUM --&gt;
-        &lt;div class=&quot;mt-8 pt-6 border-t border-gray-200 bg-salmon-50/50 p-6 rounded-lg shadow-lg&quot;&gt;
-            &lt;h3 class=&quot;text-2xl font-light text-pink-700 mb-3&quot;&gt;Recomendación: NUKLEIA SERUM CELL&lt;/h3&gt;
-            &lt;p class=&quot;text-gray-600 mb-4&quot;&gt;${data.serumData.descripcion}&lt;/p&gt;
-            &lt;ul class=&quot;list-disc ml-5 text-gray-700 space-y-1 text-sm&quot;&gt;
-                ${data.serumData.beneficios.map(b =&gt; `&lt;li&gt;${b}&lt;/li&gt;`).join(&#39;&#39;)}
-            &lt;/ul&gt;
-        &lt;/div&gt;
-    `;
-    
-    elements.resultsContainer.innerHTML = resultsHTML;
-};
-
-const alertMessage = (message, type = &#39;info&#39;) =&gt; {
-    const color = type === &#39;error&#39; ? &#39;bg-red-500&#39; : &#39;bg-blue-500&#39;;
-    const alertEl = document.createElement(&#39;div&#39;);
-    alertEl.className = `fixed bottom-5 left-1/2 transform -translate-x-1/2 p-3 ${color} text-white rounded-lg shadow-xl z-50`;
-    alertEl.textContent = message;
-    document.body.appendChild(alertEl);
-    setTimeout(() =&gt; alertEl.remove(), 4000);
-};
-
-
-// --- 4. Event Listeners ---
-
-document.addEventListener(&#39;DOMContentLoaded&#39;, () =&gt; {
-    // Inicializa Firebase al cargar el DOM
-    initFirebase();
-
-    // Manejo del Formulario de Datos (Primer Paso)
-    elements.dataForm.addEventListener(&#39;submit&#39;, (e) =&gt; {
-        e.preventDefault();
-        userName = elements.userNameInput.value.trim();
-        userEmail = elements.userEmailInput.value.trim();
-
-        if (userName === &quot;&quot; || userEmail === &quot;&quot;) {
-            alertMessage(&quot;Por favor, completa tu Nombre y Correo.&quot;, &#39;info&#39;);
-            return;
-        }
-        
-        // Si el formulario es válido, pasa a iniciar la cámara
-        elements.introSection.classList.add(&#39;hidden&#39;);
-        startCamera();
+        elements.contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Lógica para enviar el formulario del popup
+            console.log("Formulario de contacto enviado.");
+            alert('Gracias por tu solicitud. Nos pondremos en contacto pronto.');
+            elements.contactPopup.classList.add('hidden');
+            elements.contactForm.reset();
+        });
     });
 
-    // Botón para tomar la foto
-    elements.photoBtn.addEventListener(&#39;click&#39;, takePhoto);
-
-    // Botón para volver al inicio
-    elements.backBtn.addEventListener(&#39;click&#39;, () =&gt; {
-        stopCamera();
-        elements.resultsSection.classList.add(&#39;hidden&#39;);
-        elements.photoCanvas.classList.add(&#39;hidden&#39;);
-        elements.cameraFeed.classList.remove(&#39;hidden&#39;);
-        elements.photoBtn.classList.remove(&#39;hidden&#39;);
-        elements.formSection.classList.remove(&#39;hidden&#39;);
-        elements.introSection.classList.remove(&#39;hidden&#39;);
+    // --- 5. FUNCIÓN PARA GENERAR DATOS DE EJEMPLO ---
+    const generateResults = () => ({
+        results: {
+            textura: { 
+                arrugas_finas: "Leves líneas de expresión periorbitales.",
+                poros: "Visibles en zona T, uniformidad del 85%."
+            },
+            envejecimiento: {
+                proyeccion: "Sin tratamiento, la piel podría desarrollar mayor flacidez y arrugas en los próximos 5-10 años."
+            }
+        },
+        serumData: {
+            descripcion: "NUKLEIA SERUM CELL es un potente regenerador. Su componente principal, el ADN de Salmón (Polinucleótidos), actúa a nivel molecular estimulando la reparación de tejidos y la producción de colágeno."
+        },
+        recommendedProcedures: ["HIFU (Ultrasonido Focalizado)", "Dermapen (Microneedling)", "Peeling Químico Suave"]
     });
-});
-
 </script>
 
 </body>
