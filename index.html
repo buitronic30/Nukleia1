@@ -83,6 +83,21 @@
         align-items: center;
         z-index: 10;
       }
+      /* === NUEVOS ESTILOS PARA LA SECCIÓN DE CONSEJOS === */
+      .advice-card {
+        background-color: #fff;
+        border: 1px solid #fce2e8;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .advice-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .advice-icon {
+        color: var(--color-salmon-fuerte);
+      }
     </style>
 </head>
 
@@ -101,6 +116,32 @@
             Análisis facial con **Inteligencia Artificial** en 30 segundos. Precisión clínica para tu rutina.
         </p>
         
+        <div class="mt-16 max-w-4xl mx-auto">
+            <h3 class="text-2xl font-semibold text-center mb-8">Consejos para un Análisis Perfecto</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="advice-card">
+                    <i class="fas fa-lightbulb fa-3x mb-4 advice-icon"></i>
+                    <h4 class="font-bold text-lg">Buena Iluminación</h4>
+                    <p class="text-sm text-gray-600 mt-2">Ubícate frente a una fuente de luz natural, como una ventana, para evitar sombras.</p>
+                </div>
+                <div class="advice-card">
+                    <i class="fas fa-user fa-3x mb-4 advice-icon"></i>
+                    <h4 class="font-bold text-lg">Rostro Despejado</h4>
+                    <p class="text-sm text-gray-600 mt-2">Asegúrate de tener la cara limpia, sin maquillaje y con el cabello recogido.</p>
+                </div>
+                <div class="advice-card">
+                    <i class="fas fa-ban fa-3x mb-4 advice-icon"></i>
+                    <h4 class="font-bold text-lg">Sin Accesorios</h4>
+                    <p class="text-sm text-gray-600 mt-2">Quítate gafas, gorras, aros grandes o cualquier objeto que cubra tu rostro.</p>
+                </div>
+                <div class="advice-card">
+                    <i class="fas fa-face-meh fa-3x mb-4 advice-icon"></i>
+                    <h4 class="font-bold text-lg">Expresión Neutra</h4>
+                    <p class="text-sm text-gray-600 mt-2">Mantén un rostro relajado, sin sonreír ni fruncir el ceño, para un análisis preciso.</p>
+                </div>
+            </div>
+        </div>
+
         <form id="user-info-form" class="mt-16 flex flex-col items-center">
             <p id="firebase-warning" class="text-red-600 text-center mb-4 font-semibold hidden p-3 border-2 border-red-200 bg-red-50 rounded-lg w-full max-w-md">
                 ⚠ La base de datos no está conectada. Los datos no se guardarán. Por favor, revisa la configuración de Firebase.
@@ -148,16 +189,12 @@
                     <h4 class="font-bold text-xl mb-2 text-red-500 flex items-center">
                         <i class="fas fa-chart-line mr-2"></i> Envejecimiento Proyectado
                     </h4>
-                    <p id="projection-text" class="text-gray-600 text-base">
-                        </p>
+                    <p id="projection-text" class="text-gray-600 text-base"></p>
                 </div>
             </div>
-
             <div class="pt-2">
                 <h3 class="text-3xl font-semibold mb-6 border-b pb-2 border-gray-300">Diagnóstico de la Piel</h3>
-                <div id="metrics-summary" class="space-y-4">
-                    </div>
-
+                <div id="metrics-summary" class="space-y-4"></div>
                 <h4 class="text-2xl font-semibold mt-8 mb-4">Recomendación NUKLEIA SERUM</h4>
                 <p id="recommendation-text" class="text-gray-700 text-base p-4 border-l-4 border-[#f9b6c1] bg-white shadow-sm"></p>
             </div>
@@ -165,8 +202,7 @@
         
         <div class="mt-12">
             <h4 class="text-3xl font-bold mb-8 text-center">Tu Plan de Procedimientos Sugeridos</h4>
-            <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
+            <div id="procedures-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
 
         <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 mt-12">
@@ -202,7 +238,7 @@
 </main>
 
 <script type="module">
-    // Firebase Imports (con comillas corregidas)
+    // Firebase Imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -212,9 +248,9 @@
     let app, db, auth, userId = null, userName = '', userEmail = '';
     let videoStream = null;
 
-    setLogLevel('error'); // Usar 'error' para no saturar la consola.
+    setLogLevel('error');
 
-    // --- SELECCIÓN DE ELEMENTOS DEL DOM (CORREGIDO) ---
+    // --- SELECCIÓN DE ELEMENTOS DEL DOM ---
     const elements = {
         introSection: document.getElementById('intro-section'),
         analysisSection: document.getElementById('analysis-section'),
@@ -261,7 +297,7 @@
         }
     };
 
-    // --- 2. FUNCIONES DE NAVEGACIÓN Y CÁMARA ---
+    // --- 2. FUNCIONES DE CÁMARA Y NAVEGACIÓN ---
     const startCamera = async () => {
         elements.introSection.style.display = 'none';
         elements.analysisSection.style.display = 'block';
@@ -285,25 +321,25 @@
 
     const takePhoto = () => {
         elements.takePhotoBtn.disabled = true;
-        elements.overlaySpinner.style.display = 'flex'; // Mostrar spinner
+        elements.overlaySpinner.style.display = 'flex';
 
         const context = elements.photoCanvas.getContext('2d');
         elements.photoCanvas.width = elements.cameraFeed.videoWidth;
         elements.photoCanvas.height = elements.cameraFeed.videoHeight;
         
         context.save();
-        context.translate(elements.photoCanvas.width, 0); // Mover el origen
-        context.scale(-1, 1); // Reflejar horizontalmente
+        context.translate(elements.photoCanvas.width, 0);
+        context.scale(-1, 1);
         context.drawImage(elements.cameraFeed, 0, 0, elements.photoCanvas.width, elements.photoCanvas.height);
-        context.restore(); // Restaurar el contexto para que el texto no se dibuje al revés
+        context.restore();
         
         stopCamera();
-        setTimeout(processAnalysis, 2500); // Simular tiempo de análisis
+        setTimeout(processAnalysis, 2500);
     };
 
     // --- 3. PROCESAMIENTO Y GUARDADO DE DATOS ---
     const processAnalysis = async () => {
-        const analysisData = generateResults(); // Simular resultados
+        const analysisData = generateResults();
         await saveAnalysisToFirestore(analysisData);
 
         displayResults(analysisData);
@@ -319,7 +355,7 @@
         elements.metricsSummary.innerHTML = Object.entries(data.results.textura)
             .map(([key, value]) => `
                 <div class="result-card p-3">
-                    <p class="font-semibold capitalize">${key.replace('_', ' ')}</p>
+                    <p class="font-semibold capitalize">${key.replace(/_/g, ' ')}</p>
                     <p class="text-gray-600">${value}</p>
                 </div>
             `).join('');
@@ -354,7 +390,7 @@
         }
     };
 
-    // --- 4. MANEJADORES DE EVENTOS (EVENT LISTENERS) ---
+    // --- 4. MANEJADORES DE EVENTOS ---
     document.addEventListener('DOMContentLoaded', () => {
         initFirebase();
 
@@ -381,7 +417,6 @@
         
         elements.contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            // Lógica para enviar el formulario del popup
             console.log("Formulario de contacto enviado.");
             alert('Gracias por tu solicitud. Nos pondremos en contacto pronto.');
             elements.contactPopup.classList.add('hidden');
