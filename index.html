@@ -49,29 +49,37 @@
       .metric-item:last-child { border-bottom: none; }
       .metric-label { font-weight: 600; color: #4b5563; }
       .metric-value { color: #1f2937; text-align: right; }
+      .recommendation-card { background-color: #fff; border: 2px solid var(--color-salmon-fuerte); border-radius: 0.75rem; padding: 2rem; margin-top: 3rem; box-shadow: 0 10px 25px -5px rgba(249, 182, 193, 0.2); }
+      .cta-section { background-color: var(--color-salmon-rosa); padding: 2rem; border-radius: 0.75rem; text-align: center; margin-top: 2rem; }
+      .analysis-image-group { display: flex; flex-direction: column; gap: 1.5rem; }
+      .analysis-image-group .image-wrapper { background-color: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 0.5rem; position: relative; }
+      .analysis-image-group .image-wrapper .title { position: absolute; top: 0.75rem; left: 0.75rem; background-color: rgba(255, 255, 255, 0.85); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; color: #333; }
 
-      /* === NUEVOS ESTILOS PARA LAS SECCIONES FINALES === */
-      .recommendation-card {
+      /* === NUEVOS ESTILOS PARA LAS TARJETAS DE TRATAMIENTOS === */
+      .treatment-card {
         background-color: #fff;
-        border: 2px solid var(--color-salmon-fuerte);
         border-radius: 0.75rem;
-        padding: 2rem;
-        margin-top: 3rem;
-        box-shadow: 0 10px 25px -5px rgba(249, 182, 193, 0.2);
-      }
-      .cta-section {
-        background-color: var(--color-salmon-rosa);
-        padding: 2rem;
-        border-radius: 0.75rem;
+        padding: 1.5rem;
         text-align: center;
-        margin-top: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #f3f4f6;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .treatment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      }
+      .treatment-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-salmon-fuerte);
       }
     </style>
 </head>
 
 <body class="antialiased">
 <header>
-    <img src="https://placehold.co/1200x800/fce2e8/333333?text=NUKLEIA" alt="Banner principal de Nukleia" class="w-full">
+    <img src="https://placehold.co/1200x200/fce2e8/333333?text=NUKLEIA" alt="Banner principal de Nukleia" class="w-full">
 </header>
 
 <main class="container mx-auto p-4 md:p-12">
@@ -105,10 +113,12 @@
 
     <section id="results-section" class="w-full max-w-6xl mx-auto mb-12 p-4 md:p-0">
         <h2 class="text-4xl font-bold mb-8 text-center">Tus Resultados de Análisis Personalizado</h2>
-        
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 space-y-8">
-                <div class="shadow-xl"><img id="analyzed-image" class="rounded-xl w-full h-auto" src="" alt="Foto analizada"></div>
+                <div class="analysis-image-group">
+                    <div class="image-wrapper"><span class="title">Tu Foto</span><img id="analyzed-user-image" class="rounded-xl w-full h-auto" src="" alt="Tu foto analizada"></div>
+                    <div class="image-wrapper"><span class="title">Análisis Visual</span><img id="analyzed-reference-image" class="rounded-xl w-full h-auto" src="https://placehold.co/600x400/fce2e8/333333?text=IMAGEN+DE+REFERENCIA" alt="Imagen de referencia con zonas resaltadas"></div>
+                </div>
                 <div class="highlight-card"><h4 class="font-bold text-xl mb-2 flex items-center justify-center"><i class="fas fa-user-clock mr-2"></i> Edad Biológica</h4><p id="biological-age" class="text-4xl font-extrabold text-[#d6336c]">-</p></div>
                 <div class="highlight-card"><h4 class="font-bold text-xl mb-2 flex items-center justify-center"><i class="fas fa-chart-line mr-2"></i> Envejecimiento Proyectado</h4><p id="projection-text" class="text-gray-600 text-base">-</p></div>
             </div>
@@ -117,49 +127,39 @@
             </div>
         </div>
 
-        <div class="recommendation-card">
-            <h3 class="text-3xl font-bold text-center mb-4">Tu Solución: NUKLEIA SERUM</h3>
-            <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Basado en tu análisis, NUKLEIA SERUM es el tratamiento ideal para abordar las necesidades específicas de tu piel, promoviendo una regeneración celular profunda y visible.</p>
-            <div class="grid md:grid-cols-2 gap-8 text-left">
-                <div>
-                    <h4 class="text-xl font-bold flex items-center mb-2"><i class="fas fa-dna mr-3 text-2xl text-[#f9b6c1]"></i>Polinucleótidos (PDRN)</h4>
-                    <p class="text-gray-600">Extraídos del **ADN de salmón**, estos biopolímeros reparan las células dañadas, estimulan la producción de colágeno y elastina, mejorando la firmeza y reduciendo arrugas desde el interior.</p>
+        <div id="suggested-treatments-section" class="mt-12">
+            <h3 class="text-3xl font-bold text-center mb-8">Tu Plan de Tratamientos Sugeridos</h3>
+            <div id="treatments-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 </div>
-                <div>
-                    <h4 class="text-xl font-bold flex items-center mb-2"><i class="fas fa-atom mr-3 text-2xl text-[#f9b6c1]"></i>Exosomas</h4>
-                    <p class="text-gray-600">Actúan como mensajeros celulares, transportando factores de crecimiento y proteínas que instruyen a las células a regenerarse y rejuvenecer, resultando en una piel más luminosa y saludable.</p>
-                </div>
-            </div>
-            <div class="text-center mt-8">
-                <a href="#" class="btn-primary inline-block"><i class="fas fa-shopping-cart mr-2"></i> Comprar NUKLEIA SERUM</a>
-            </div>
         </div>
 
+        <div class="recommendation-card">
+            <h3 class="text-3xl font-bold text-center mb-4">Tu Solución en Casa: NUKLEIA SERUM</h3>
+            <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Para complementar tus tratamientos y potenciar los resultados, NUKLEIA SERUM promueve una regeneración celular profunda y visible.</p>
+            <div class="grid md:grid-cols-2 gap-8 text-left">
+                <div><h4 class="text-xl font-bold flex items-center mb-2"><i class="fas fa-dna mr-3 text-2xl text-[#f9b6c1]"></i>Polinucleótidos (PDRN)</h4><p class="text-gray-600">Extraídos del **ADN de salmón**, reparan las células dañadas, estimulan la producción de colágeno y mejoran la firmeza.</p></div>
+                <div><h4 class="text-xl font-bold flex items-center mb-2"><i class="fas fa-atom mr-3 text-2xl text-[#f9b6c1]"></i>Exosomas</h4><p class="text-gray-600">Actúan como mensajeros celulares, transportando factores de crecimiento que instruyen a las células a regenerarse y rejuvenecer.</p></div>
+            </div>
+            <div class="text-center mt-8"><a href="#" class="btn-primary inline-block"><i class="fas fa-shopping-cart mr-2"></i> Comprar NUKLEIA SERUM</a></div>
+        </div>
         <div class="cta-section">
-            <h3 class="text-2xl font-bold mb-2">¿Lista para el Siguiente Paso?</h3>
-            <p class="text-gray-700 mb-6">Potencia tus resultados con un plan profesional. Te recomendamos agendar una consulta en **MB Estética & Salud** para un tratamiento personalizado.</p>
-            <a href="https://wa.me/541126572893" target="_blank" class="btn-primary inline-block text-lg">
-                <i class="fab fa-whatsapp mr-2"></i> Sacar Turno por WhatsApp
-            </a>
+            <h3 class="text-2xl font-bold mb-2">Agenda tu Consulta Profesional</h3>
+            <p class="text-gray-700 mb-6">Te recomendamos agendar una consulta en **MB Estética & Salud** para un plan de tratamiento personalizado.</p>
+            <a href="https://wa.me/541126572893" target="_blank" class="btn-primary inline-block text-lg"><i class="fab fa-whatsapp mr-2"></i> Sacar Turno por WhatsApp</a>
         </div>
     </section>
-    
-    </main>
+</main>
 
 
 <script type="module">
-    // Firebase Imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // --- CONFIGURACIÓN Y VARIABLES GLOBALES ---
     const firebaseConfig = {"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"};
     let app, db, auth, userId = null, userName = '', userEmail = '';
     let videoStream = null;
     setLogLevel('error');
 
-    // --- SELECCIÓN DE ELEMENTOS DEL DOM ---
     const elements = {
         introSection: document.getElementById('intro-section'),
         analysisSection: document.getElementById('analysis-section'),
@@ -169,9 +169,11 @@
         takePhotoBtn: document.getElementById('take-photo-btn'),
         overlaySpinner: document.getElementById('overlay'),
         diagnosticsContainer: document.getElementById('diagnostics-container'),
+        treatmentsList: document.getElementById('treatments-list'), // <-- NUEVO ELEMENTO
         projectionText: document.getElementById('projection-text'),
         biologicalAge: document.getElementById('biological-age'),
-        analyzedImage: document.getElementById('analyzed-image'),
+        analyzedUserImage: document.getElementById('analyzed-user-image'),
+        analyzedReferenceImage: document.getElementById('analyzed-reference-image'),
         userNameInput: document.getElementById('name'),
         userEmailInput: document.getElementById('email'),
         userInfoForm: document.getElementById('user-info-form'),
@@ -179,34 +181,87 @@
         errorMessage: document.getElementById('error-message')
     };
     
-    // --- SIMULACIÓN DE RESULTADOS ---
+    // ==============================================================================
+    // === SIMULACIÓN DE RESULTADOS (generateResults ACTUALIZADO) ===
+    // ==============================================================================
     const generateResults = () => {
         const results = {
             edadBiologica: "2 años menor",
             envejecimientoProyectado: "Sin tratamiento, se proyecta una mayor flacidez y arrugas en los próximos 5-10 años.",
-            impactoEmocional: "Signos de cansancio en la zona periorbital y falta de luminosidad.",
             morfologiaFacial: { simetria: "Alta", proporciones: "Armónicas", volumenes: "Buena densidad" },
             texturaPiel: { arrugasFinas: "Presentes (periorbital)", arrugasProfundas: "Ausentes", poros: "Dilatados (zona T)" },
             pigmentacion: { manchasSolares: "Leves", melasma: "No se detecta", rojeces: "Mínimas" },
-            elasticidadFirmeza: { perdidaDeVolumen: "Incipiente", flacidez: "No significativa" },
+            elasticidadFirmeza: { perdidaDeVolumen: "Incipiente", flacidez: "Leve" },
             hidratacionBrillo: { tipoPiel: "Mixta", brillo: "Saludable" },
             lesionesImperfecciones: { acne: "Ausente", cicatrices: "Marcas superficiales" }
         };
-        return { results };
+
+        // Lógica para sugerir tratamientos basada en los resultados
+        const tratamientosSugeridos = {
+            'HIFU': {
+                problema: ['elasticidadFirmeza'],
+                descripcion: 'Para un efecto lifting y firmeza profunda.',
+                icono: 'fas fa-wave-square'
+            },
+            'Radiofrecuencia': {
+                problema: ['elasticidadFirmeza'],
+                descripcion: 'Estimula el colágeno para combatir la flacidez.',
+                icono: 'fas fa-broadcast-tower'
+            },
+            'Luz Pulsada (IPL)': {
+                problema: ['pigmentacion'],
+                descripcion: 'Ideal para tratar manchas, rojeces y rejuvenecer.',
+                icono: 'fas fa-lightbulb'
+            },
+            'Dermapen / Microneedling': {
+                problema: ['texturaPiel', 'lesionesImperfecciones'],
+                descripcion: 'Mejora la textura, poros, cicatrices y arrugas finas.',
+                icono: 'fas fa-border-style'
+            },
+            'Hidrodermoabrasión': {
+                problema: ['hidratacionBrillo'],
+                descripcion: 'Aporta limpieza profunda, hidratación y luminosidad.',
+                icono: 'fas fa-tint'
+            },
+            'Peeling Ultrasónico': {
+                problema: ['texturaPiel'],
+                descripcion: 'Exfoliación suave para mejorar la textura y luminosidad.',
+                icono: 'fas fa-wind'
+            }
+        };
+
+        // Seleccionar los tratamientos relevantes
+        let recommendedTreatments = new Set();
+        if (results.elasticidadFirmeza.flacidez !== "No significativa") recommendedTreatments.add('HIFU').add('Radiofrecuencia');
+        if (results.pigmentacion.manchasSolares !== "Ausentes") recommendedTreatments.add('Luz Pulsada (IPL)');
+        if (results.texturaPiel.poros.includes("Dilatados") || results.lesionesImperfecciones.cicatrices !== "Ausentes") recommendedTreatments.add('Dermapen / Microneedling');
+        if (results.hidratacionBrillo.tipoPiel.includes("Mixta")) recommendedTreatments.add('Hidrodermoabrasión');
+        
+        // Si no hay problemas mayores, recomendar uno básico
+        if (recommendedTreatments.size === 0) recommendedTreatments.add('Peeling Ultrasónico');
+
+        const referenceImageUrl = "https://placehold.co/600x400/f9b6c1/ffffff?text=Zonas+Problema+Resaltadas";
+
+        return { results, tratamientosSugeridos, recommendedTreatments: Array.from(recommendedTreatments), referenceImageUrl };
     };
 
-    // --- VISUALIZACIÓN DE RESULTADOS ---
+    // ==============================================================================
+    // === VISUALIZACIÓN DINÁMICA (displayResults ACTUALIZADO) ===
+    // ==============================================================================
     const displayResults = (data) => {
-        const { results } = data;
-        elements.analyzedImage.src = elements.photoCanvas.toDataURL('image/jpeg');
+        const { results, tratamientosSugeridos, recommendedTreatments, referenceImageUrl } = data;
+
+        // 1. Mostrar imágenes y datos destacados
+        elements.analyzedUserImage.src = elements.photoCanvas.toDataURL('image/jpeg');
+        elements.analyzedReferenceImage.src = referenceImageUrl;
         elements.biologicalAge.textContent = results.edadBiologica || '-';
         elements.projectionText.textContent = results.envejecimientoProyectado || '-';
+
+        // 2. Mostrar Diagnóstico Detallado
         elements.diagnosticsContainer.innerHTML = '<h3 class="text-3xl font-semibold border-b pb-2">Diagnóstico Detallado</h3>';
-        
         const formatTitle = (key) => (key.replace(/([A-Z])/g, ' $1')).replace(/^./, str => str.toUpperCase());
-        
         for (const [category, metrics] of Object.entries(results)) {
-            if (typeof metrics === 'object' && metrics !== null) {
+            if (typeof metrics === 'object') {
                 let metricsHTML = '';
                 for (const [key, value] of Object.entries(metrics)) {
                     metricsHTML += `<div class="metric-item"><span class="metric-label">${formatTitle(key)}</span><span class="metric-value">${value}</span></div>`;
@@ -215,6 +270,22 @@
                 elements.diagnosticsContainer.innerHTML += categoryHTML;
             }
         }
+        
+        // 3. Mostrar Tratamientos Sugeridos (NUEVO)
+        elements.treatmentsList.innerHTML = ''; // Limpiar lista anterior
+        recommendedTreatments.forEach(treatmentName => {
+            const treatmentData = tratamientosSugeridos[treatmentName];
+            if (treatmentData) {
+                const treatmentCardHTML = `
+                    <div class="treatment-card">
+                        <i class="${treatmentData.icono} treatment-icon"></i>
+                        <h4 class="font-bold text-lg">${treatmentName}</h4>
+                        <p class="text-sm text-gray-600 mt-2">${treatmentData.descripcion}</p>
+                    </div>
+                `;
+                elements.treatmentsList.innerHTML += treatmentCardHTML;
+            }
+        });
     };
     
     // --- LÓGICA DE LA APLICACIÓN (CÁMARA, FIREBASE, EVENTOS) ---
@@ -223,7 +294,7 @@
     const stopCamera = () => { if (videoStream) { videoStream.getTracks().forEach(track => track.stop()); videoStream = null; } };
     const takePhoto = () => { elements.takePhotoBtn.disabled = true; elements.overlaySpinner.style.display = 'flex'; const context = elements.photoCanvas.getContext('2d'); elements.photoCanvas.width = elements.cameraFeed.videoWidth; elements.photoCanvas.height = elements.cameraFeed.videoHeight; context.save(); context.translate(elements.photoCanvas.width, 0); context.scale(-1, 1); context.drawImage(elements.cameraFeed, 0, 0, elements.photoCanvas.width, elements.photoCanvas.height); context.restore(); stopCamera(); setTimeout(processAnalysis, 2500); };
     const processAnalysis = async () => { const analysisData = generateResults(); await saveAnalysisToFirestore(analysisData); displayResults(analysisData); elements.analysisSection.style.display = 'none'; elements.resultsSection.style.display = 'block'; };
-    const saveAnalysisToFirestore = async (analysisData) => { if (!db || !userId) { console.error("Firestore no disponible."); return; } try { await addDoc(collection(db, 'analyses'), { userId, name: userName, email: userEmail, date: new Date(), ...analysisData }); console.log("Análisis guardado."); } catch (error) { console.error("Error al guardar:", error); } };
+    const saveAnalysisToFirestore = async (analysisData) => { if (!db || !userId) { console.error("Firestore no disponible."); return; } try { const dataToSave = { userId, name: userName, email: userEmail, date: new Date(), ...analysisData }; await addDoc(collection(db, 'analyses'), dataToSave); console.log("Análisis guardado."); } catch (error) { console.error("Error al guardar:", error); } };
     document.addEventListener('DOMContentLoaded', () => { initFirebase(); elements.userInfoForm.addEventListener('submit', (e) => { e.preventDefault(); userName = elements.userNameInput.value.trim(); userEmail = elements.userEmailInput.value.trim(); if (userName && userEmail) { startCamera(); } else { alert('Por favor, completa tu nombre y email.'); } }); elements.takePhotoBtn.addEventListener('click', takePhoto); });
 </script>
 
