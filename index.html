@@ -29,6 +29,7 @@
         border-radius: 9999px;
         transition: background-color 0.3s, transform 0.1s;
         font-weight: 600;
+        text-align: center;
       }
       .btn-primary:hover {
         background-color: #f7a0b1;
@@ -42,39 +43,28 @@
       .advice-card { background-color: #fff; border: 1px solid #fce2e8; padding: 1.5rem; border-radius: 0.75rem; transition: transform 0.2s, box-shadow 0.2s; }
       .advice-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
       .advice-icon { color: var(--color-salmon-fuerte); }
+      .highlight-card { background: linear-gradient(135deg, #fdfcfc, #fce2e8); border: 1px solid white; border-radius: 0.75rem; padding: 1.5rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+      .category-card { background-color: #ffffff; border-left: 4px solid var(--color-salmon-fuerte); padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+      .metric-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+      .metric-item:last-child { border-bottom: none; }
+      .metric-label { font-weight: 600; color: #4b5563; }
+      .metric-value { color: #1f2937; text-align: right; }
 
-      /* === NUEVOS ESTILOS PARA LA SECCIÓN DE RESULTADOS DETALLADOS === */
-      .highlight-card {
-        background: linear-gradient(135deg, #fdfcfc, #fce2e8);
-        border: 1px solid white;
+      /* === NUEVOS ESTILOS PARA LAS SECCIONES FINALES === */
+      .recommendation-card {
+        background-color: #fff;
+        border: 2px solid var(--color-salmon-fuerte);
         border-radius: 0.75rem;
-        padding: 1.5rem;
+        padding: 2rem;
+        margin-top: 3rem;
+        box-shadow: 0 10px 25px -5px rgba(249, 182, 193, 0.2);
+      }
+      .cta-section {
+        background-color: var(--color-salmon-rosa);
+        padding: 2rem;
+        border-radius: 0.75rem;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      }
-      .category-card {
-        background-color: #ffffff;
-        border-left: 4px solid var(--color-salmon-fuerte);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      }
-      .metric-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #f3f4f6;
-      }
-      .metric-item:last-child {
-        border-bottom: none;
-      }
-      .metric-label {
-        font-weight: 600;
-        color: #4b5563;
-      }
-      .metric-value {
-        color: #1f2937;
-        text-align: right;
+        margin-top: 2rem;
       }
     </style>
 </head>
@@ -85,11 +75,9 @@
 </header>
 
 <main class="container mx-auto p-4 md:p-12">
-
     <section id="intro-section" class="py-12">
         <h2 class="text-4xl md:text-6xl font-light text-center">DESCUBRE LO QUE TU PIEL NECESITA</h2>
         <p class="mt-4 text-gray-600 text-xl text-center">Análisis facial con IA en 30 segundos. Precisión clínica para tu rutina.</p>
-        
         <div class="mt-16 max-w-4xl mx-auto">
             <h3 class="text-2xl font-semibold text-center mb-8">Consejos para un Análisis Perfecto</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
@@ -99,7 +87,6 @@
                 <div class="advice-card"><i class="fas fa-face-meh fa-3x mb-4 advice-icon"></i><h4 class="font-bold text-lg">Expresión Neutra</h4><p class="text-sm text-gray-600 mt-2">Mantén un rostro relajado, sin sonreír ni fruncir el ceño.</p></div>
             </div>
         </div>
-
         <form id="user-info-form" class="mt-16 flex flex-col items-center">
             <p id="firebase-warning" class="text-red-600 text-center mb-4 font-semibold hidden p-3 border-2 border-red-200 bg-red-50 rounded-lg w-full max-w-md">⚠ La base de datos no está conectada.</p>
             <h4 class="text-2xl font-light mb-6">Comienza tu Análisis Gratuito</h4>
@@ -118,21 +105,42 @@
 
     <section id="results-section" class="w-full max-w-6xl mx-auto mb-12 p-4 md:p-0">
         <h2 class="text-4xl font-bold mb-8 text-center">Tus Resultados de Análisis Personalizado</h2>
+        
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 space-y-8">
                 <div class="shadow-xl"><img id="analyzed-image" class="rounded-xl w-full h-auto" src="" alt="Foto analizada"></div>
-                <div class="highlight-card">
-                    <h4 class="font-bold text-xl mb-2 flex items-center justify-center"><i class="fas fa-user-clock mr-2"></i> Edad Biológica</h4>
-                    <p id="biological-age" class="text-4xl font-extrabold text-[#d6336c]">-</p>
-                </div>
-                <div class="highlight-card">
-                     <h4 class="font-bold text-xl mb-2 flex items-center justify-center"><i class="fas fa-chart-line mr-2"></i> Envejecimiento Proyectado</h4>
-                    <p id="projection-text" class="text-gray-600 text-base">-</p>
-                </div>
+                <div class="highlight-card"><h4 class="font-bold text-xl mb-2 flex items-center justify-center"><i class="fas fa-user-clock mr-2"></i> Edad Biológica</h4><p id="biological-age" class="text-4xl font-extrabold text-[#d6336c]">-</p></div>
+                <div class="highlight-card"><h4 class="font-bold text-xl mb-2 flex items-center justify-center"><i class="fas fa-chart-line mr-2"></i> Envejecimiento Proyectado</h4><p id="projection-text" class="text-gray-600 text-base">-</p></div>
             </div>
             <div id="diagnostics-container" class="lg:col-span-2 space-y-6">
                 <h3 class="text-3xl font-semibold border-b pb-2">Diagnóstico Detallado</h3>
+            </div>
+        </div>
+
+        <div class="recommendation-card">
+            <h3 class="text-3xl font-bold text-center mb-4">Tu Solución: NUKLEIA SERUM</h3>
+            <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">Basado en tu análisis, NUKLEIA SERUM es el tratamiento ideal para abordar las necesidades específicas de tu piel, promoviendo una regeneración celular profunda y visible.</p>
+            <div class="grid md:grid-cols-2 gap-8 text-left">
+                <div>
+                    <h4 class="text-xl font-bold flex items-center mb-2"><i class="fas fa-dna mr-3 text-2xl text-[#f9b6c1]"></i>Polinucleótidos (PDRN)</h4>
+                    <p class="text-gray-600">Extraídos del **ADN de salmón**, estos biopolímeros reparan las células dañadas, estimulan la producción de colágeno y elastina, mejorando la firmeza y reduciendo arrugas desde el interior.</p>
                 </div>
+                <div>
+                    <h4 class="text-xl font-bold flex items-center mb-2"><i class="fas fa-atom mr-3 text-2xl text-[#f9b6c1]"></i>Exosomas</h4>
+                    <p class="text-gray-600">Actúan como mensajeros celulares, transportando factores de crecimiento y proteínas que instruyen a las células a regenerarse y rejuvenecer, resultando en una piel más luminosa y saludable.</p>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <a href="#" class="btn-primary inline-block"><i class="fas fa-shopping-cart mr-2"></i> Comprar NUKLEIA SERUM</a>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h3 class="text-2xl font-bold mb-2">¿Lista para el Siguiente Paso?</h3>
+            <p class="text-gray-700 mb-6">Potencia tus resultados con un plan profesional. Te recomendamos agendar una consulta en **MB Estética & Salud** para un tratamiento personalizado.</p>
+            <a href="https://wa.me/541126572893" target="_blank" class="btn-primary inline-block text-lg">
+                <i class="fab fa-whatsapp mr-2"></i> Sacar Turno por WhatsApp
+            </a>
         </div>
     </section>
     
@@ -146,7 +154,6 @@
     import { getFirestore, collection, addDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- CONFIGURACIÓN Y VARIABLES GLOBALES ---
-    // (Tu configuración de Firebase aquí)
     const firebaseConfig = {"apiKey":"AIzaSyCvVHCbcuCISfV1WeCUjhHcJvuYQvj4IZo","authDomain":"nukleia-web.firebaseapp.com","projectId":"nukleia-web","storageBucket":"nukleia-web.firebasestorage.app","messagingSenderId":"925270420611","appId":"1:925270420611:web:7ef1d8c6e01e8c1df37fb6","measurementId":"G-CGQV62HY8Y"};
     let app, db, auth, userId = null, userName = '', userEmail = '';
     let videoStream = null;
@@ -172,106 +179,47 @@
         errorMessage: document.getElementById('error-message')
     };
     
-    // ==============================================================================
-    // === PASO 1: SIMULACIÓN DE RESULTADOS (generateResults ACTUALIZADO) ===
-    // ==============================================================================
+    // --- SIMULACIÓN DE RESULTADOS ---
     const generateResults = () => {
-        // Objeto que contiene todos los puntos de análisis que pediste
         const results = {
-            edadBiologica: "2 años menor que la edad cronológica",
-            envejecimientoProyectado: "Proyección a 5 años: aparición de surcos nasogenianos moderados y pérdida de definición en el óvalo facial sin tratamiento preventivo.",
-            impactoEmocional: "Se detectan signos de cansancio en la zona periorbital (ojeras leves) y una leve falta de luminosidad general.",
-            
-            morfologiaFacial: {
-                simetria: "Alta, con ligera asimetría en el arco superciliar derecho.",
-                proporciones: "Armónicas, tercios faciales equilibrados.",
-                volumenes: "Buena densidad en pómulos, ligera pérdida en contorno mandibular."
-            },
-            texturaPiel: {
-                arrugasFinas: "Presentes en la zona periorbital ('patas de gallo').",
-                arrugasProfundas: "Ausentes o muy incipientes.",
-                poros: "Ligeramente dilatados en la zona T (nariz y frente).",
-                uniformidad: "Buena en general, con un 85% de homogeneidad."
-            },
-            pigmentacion: {
-                manchasSolares: "Lentigos solares leves en pómulos.",
-                melasma: "No se detecta.",
-                rojeces: "Mínimas en las aletas de la nariz (cuperosis incipiente).",
-                discromias: "Tono de piel mayormente uniforme."
-            },
-            elasticidadFirmeza: {
-                perdidaDeVolumen: "Incipiente en el tercio inferior del rostro.",
-                flacidez: "Firmeza del 92%. Aún no es significativa."
-            },
-            hidratacionBrillo: {
-                tipoPiel: "Mixta (zona T grasa, mejillas normales a secas).",
-                brillo: "Brillo saludable en pómulos, controlado en la frente."
-            },
-            lesionesImperfecciones: {
-                acne: "Ausencia de lesiones activas.",
-                cicatrices: "Marcas post-acné superficiales en la zona del mentón.",
-                marcas: "No se detectan otras marcas relevantes."
-            }
+            edadBiologica: "2 años menor",
+            envejecimientoProyectado: "Sin tratamiento, se proyecta una mayor flacidez y arrugas en los próximos 5-10 años.",
+            impactoEmocional: "Signos de cansancio en la zona periorbital y falta de luminosidad.",
+            morfologiaFacial: { simetria: "Alta", proporciones: "Armónicas", volumenes: "Buena densidad" },
+            texturaPiel: { arrugasFinas: "Presentes (periorbital)", arrugasProfundas: "Ausentes", poros: "Dilatados (zona T)" },
+            pigmentacion: { manchasSolares: "Leves", melasma: "No se detecta", rojeces: "Mínimas" },
+            elasticidadFirmeza: { perdidaDeVolumen: "Incipiente", flacidez: "No significativa" },
+            hidratacionBrillo: { tipoPiel: "Mixta", brillo: "Saludable" },
+            lesionesImperfecciones: { acne: "Ausente", cicatrices: "Marcas superficiales" }
         };
-
-        const serumData = {
-            descripcion: "NUKLEIA SERUM CELL es un potente regenerador. Su componente principal, el ADN de Salmón (Polinucleótidos), actúa a nivel molecular estimulando la reparación de tejidos y la producción de colágeno."
-        };
-
-        const recommendedProcedures = ["HIFU (Ultrasonido Focalizado)", "Dermapen (Microneedling)", "Peeling Químico Suave"];
-
-        return { results, serumData, recommendedProcedures };
+        return { results };
     };
 
-
-    // ==============================================================================
-    // === PASO 2: VISUALIZACIÓN DINÁMICA (displayResults ACTUALIZADO) ===
-    // ==============================================================================
+    // --- VISUALIZACIÓN DE RESULTADOS ---
     const displayResults = (data) => {
         const { results } = data;
-
-        // 1. Rellenar los elementos destacados (foto, edad, proyección)
         elements.analyzedImage.src = elements.photoCanvas.toDataURL('image/jpeg');
         elements.biologicalAge.textContent = results.edadBiologica || '-';
         elements.projectionText.textContent = results.envejecimientoProyectado || '-';
-
-        // 2. Limpiar el contenedor de diagnósticos anteriores
         elements.diagnosticsContainer.innerHTML = '<h3 class="text-3xl font-semibold border-b pb-2">Diagnóstico Detallado</h3>';
         
-        // 3. Función para convertir camelCase a Título (ej: texturaPiel -> Textura de la Piel)
-        const formatTitle = (key) => {
-            const result = key.replace(/([A-Z])/g, ' $1');
-            return result.charAt(0).toUpperCase() + result.slice(1);
-        };
+        const formatTitle = (key) => (key.replace(/([A-Z])/g, ' $1')).replace(/^./, str => str.toUpperCase());
         
-        // 4. Crear dinámicamente las tarjetas de resultados
         for (const [category, metrics] of Object.entries(results)) {
-            // Ignoramos los que ya mostramos en las tarjetas destacadas
             if (typeof metrics === 'object' && metrics !== null) {
                 let metricsHTML = '';
                 for (const [key, value] of Object.entries(metrics)) {
-                    metricsHTML += `
-                        <div class="metric-item">
-                            <span class="metric-label">${formatTitle(key)}</span>
-                            <span class="metric-value">${value}</span>
-                        </div>
-                    `;
+                    metricsHTML += `<div class="metric-item"><span class="metric-label">${formatTitle(key)}</span><span class="metric-value">${value}</span></div>`;
                 }
-
-                const categoryHTML = `
-                    <div class="category-card">
-                        <h4 class="text-xl font-bold mb-2">${formatTitle(category)}</h4>
-                        ${metricsHTML}
-                    </div>
-                `;
+                const categoryHTML = `<div class="category-card"><h4 class="text-xl font-bold mb-2">${formatTitle(category)}</h4>${metricsHTML}</div>`;
                 elements.diagnosticsContainer.innerHTML += categoryHTML;
             }
         }
     };
     
-    // --- Resto del script (inicialización, cámara, etc.) sin cambios ---
-    const initFirebase = async () => { try { app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); onAuthStateChanged(auth, async (user) => { if (user) { userId = user.uid; console.log("Firebase conectado. User ID:", userId); elements.firebaseWarning.classList.add('hidden'); } else { await signInAnonymously(auth); } }); } catch (error) { console.error("Error al inicializar Firebase:", error); elements.firebaseWarning.classList.remove('hidden'); } };
-    const startCamera = async () => { elements.introSection.style.display = 'none'; elements.analysisSection.style.display = 'block'; try { videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }); elements.cameraFeed.srcObject = videoStream; } catch (err) { elements.errorMessage.textContent = 'Error al acceder a la cámara.'; console.error("Error:", err); } };
+    // --- LÓGICA DE LA APLICACIÓN (CÁMARA, FIREBASE, EVENTOS) ---
+    const initFirebase = async () => { try { app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); onAuthStateChanged(auth, async (user) => { if (user) { userId = user.uid; } else { await signInAnonymously(auth); } }); } catch (error) { console.error("Error Firebase:", error); elements.firebaseWarning.classList.remove('hidden'); } };
+    const startCamera = async () => { elements.introSection.style.display = 'none'; elements.analysisSection.style.display = 'block'; try { videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }); elements.cameraFeed.srcObject = videoStream; } catch (err) { elements.errorMessage.textContent = 'Error al acceder a la cámara.'; console.error("Error Cámara:", err); } };
     const stopCamera = () => { if (videoStream) { videoStream.getTracks().forEach(track => track.stop()); videoStream = null; } };
     const takePhoto = () => { elements.takePhotoBtn.disabled = true; elements.overlaySpinner.style.display = 'flex'; const context = elements.photoCanvas.getContext('2d'); elements.photoCanvas.width = elements.cameraFeed.videoWidth; elements.photoCanvas.height = elements.cameraFeed.videoHeight; context.save(); context.translate(elements.photoCanvas.width, 0); context.scale(-1, 1); context.drawImage(elements.cameraFeed, 0, 0, elements.photoCanvas.width, elements.photoCanvas.height); context.restore(); stopCamera(); setTimeout(processAnalysis, 2500); };
     const processAnalysis = async () => { const analysisData = generateResults(); await saveAnalysisToFirestore(analysisData); displayResults(analysisData); elements.analysisSection.style.display = 'none'; elements.resultsSection.style.display = 'block'; };
